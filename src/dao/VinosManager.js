@@ -5,6 +5,10 @@ class VinosManager{
     static async getVinos(){
         if(fs.existsSync(this.path)){
             let vinos=JSON.parse(await fs.promises.readFile(this.path, {encoding:"utf-8"}))
+            console.log("desde VinosManager Path: ")
+            console.log(this.path)
+            console.log("desde VinosManager Vinos: ")
+            console.log(vinos)
             return vinos
         }else{
             return []
@@ -48,13 +52,13 @@ class VinosManager{
         if(indiceVino===-1){
             throw new Error(`Error: no existe id ${id}`)
         }
-        let cantidad0=vinos.length
+        let cantidadAntes=vinos.length
         vinos=vinos.filter(h=>h.id!==id)   
-        let cantidad1=vinos.length
+        let cantidadDespues=vinos.length
        
         await fs.promises.writeFile(this.path, JSON.stringify(vinos, null, 5))
 
-        return cantidad0-cantidad1
+        return cantidadAntes-cantidadDespues
     }
 }
 
