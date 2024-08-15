@@ -14,7 +14,7 @@
   "description": "Trabajo Práctico de Backend 1",
   "dependencies": {
     "express": "^4.19.2",
-    "nodemon": "^3.1.4"
-  },
-  "devDependencies": {}
+    "nodemon": "^3.1.4",
+    "uuidv4": "^6.2.13"
+  }
 }

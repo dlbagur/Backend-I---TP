@@ -4,8 +4,9 @@ import { error } from "console"
 
 const router = Router();
 
-// VinosManager.path="../dao/VinosManager.js"
 VinosManager.path="src/data/vinos.json"
+
+const categoriasValidas = ["Tintos", "Blancos", "Rosados", "Espumantes"];    
 
 router.get("/", async (req, res) => {
   let vinos
@@ -117,24 +118,59 @@ router.get("/:id", async (req, res) => {
 });
 
 router.post("/", async (req, res) => {
-  let { code, ...otros } = req.body; // ... aqui el operador resto
-  if (!code) {
+  const vinoNuevo = req.body
+  vinoNuevo.Status = true
+  if (!vinoNuevo.title || !vinoNuevo.description || !vinoNuevo.code || !vinoNuevo.price || !vinoNuevo.stock || !vinoNuevo.category) {
     res.setHeader("Content-Type", "applcation/json");
-    return res.status(400).json({ error: `Complete la propiedad CODE` });
+    return res.status(400).json({ 
+      error: 'Es obligatorio completar los campos title, description, code, price, stock y category' 
+    });
+  }
+  let precio = Number(vinoNuevo.price);
+  if(isNaN(precio)) {
+    {return res.status(400).json({ 
+        error: 'El campo precio debe ser numérico' 
+      })
+    } 
+    }else{
+      if(precio<0) {
+        {return res.status(400).json({ 
+            error: 'El campo precio debe ser mayor o igual a 0' 
+          })
+        }
+      }
+    }
+  let disponible = Number(vinoNuevo.stock);
+  if(isNaN(disponible)) {
+    {return res.status(400).json({ 
+        error: 'El campo stock debe ser numérico' 
+      })
+    } 
+    }else{
+      if(disponible<0) {
+        {return res.status(400).json({ 
+            error: 'El campo stock debe ser mayor o igual a 0' 
+          })
+        }
+      }
+    }
+  if (!categoriasValidas.includes(vinoNuevo.category)) {
+    res.setHeader("Content-Type", "applcation/json");
+    return res.status(400).json({ 
+      error: `Las categorias (category) válidas son: "Tintos", "Blancos", "Rosados" o "Espumantes"` 
+    });
   }
   let vinos = await VinosManager.getVinos();
-  let existe = vinos.find((v) => v.code.toLowerCase() === code.toLowerCase());
+  let existe = vinos.find((v) => v.code.toLowerCase() === vinoNuevo.code.toLowerCase());
   if (existe) {
     res.setHeader("Content-Type", "applcation/json");
     return res
       .status(400)
-      .json({ error: `Ya existe un vino de nombre ${code}` });
+      .json({ error: `Ya existe un vino de nombre ${vinoNuevo.code}` });
   }
 
-  // validar el resto
   try {
-    let preVino = { code, ...otros };
-    let vinoNuevo = await VinosManager.addVino(preVino);
+    await VinosManager.addVino(vinoNuevo);
     res.setHeader("Content-Type", "applcation/json");
     return res.status(200).json({ vinoNuevo });
   } catch (error) {
@@ -152,9 +188,9 @@ router.put("/:id", async (req, res) => {
   id = Number(id);
   if (isNaN(id)) {
     res.setHeader("Content-Type", "application/json");
-    return res.status(400).json({ error: `id debe ser numerico` });
+    return res.status(400).json({ error: `id ${id} debe ser numérico` });
   }
-  let vinos;
+  let vinos
   try {
     vinos = await VinosManager.getVinos();
   } catch (error) {
@@ -172,9 +208,67 @@ router.put("/:id", async (req, res) => {
   }
 
   let aModificar = req.body;
-  delete aModificar.id;
+  vinos
+  try {
+    vinos = await VinosManager.getVinos();
+  } catch (error) {
+    console.log(error);
+    res.setHeader("Content-Type", "application/json");
+    return res.status(500).json({
+      error: `Error inesperado en el servidor. Intente más tarde`,
+      detalle: `${error.message}`,
+    });
+  }
+  vino = vinos.find((h) => h.id === id);
+  if (!vino) {
+    res.setHeader("Content-Type", "application/json");
+    return res.status(400).json({ error: `No existe vino con id: ${id}` });
+  }
 
   // validaciones
+  if (!aModificar.title || !aModificar.description || !aModificar.code || !aModificar.price || !aModificar.stock || !aModificar.category) {
+    res.setHeader("Content-Type", "applcation/json");
+    return res.status(400).json({ 
+      error: 'Es obligatorio completar los campos title, description, code, price, stock y category' 
+    });
+  }
+
+  let precio = Number(aModificar.price);
+  if(isNaN(precio)) {
+    {return res.status(400).json({ 
+        error: 'El campo precio debe ser numérico' 
+      })
+    } 
+    }else{
+      if(precio<0) {
+        {return res.status(400).json({ 
+            error: 'El campo precio debe ser mayor o igual a 0' 
+          })
+        }
+      }
+    }
+  let disponible = Number(aModificar.stock);
+  if(isNaN(disponible)) {
+    {return res.status(400).json({ 
+        error: 'El campo stock debe ser numérico' 
+      })
+    } 
+    }else{
+      if(disponible<0) {
+        {return res.status(400).json({ 
+            error: 'El campo stock debe ser mayor o igual a 0' 
+          })
+        }
+      }
+    }
+  if (!categoriasValidas.includes(aModificar.category)) {
+    res.setHeader("Content-Type", "applcation/json");
+    return res.status(400).json({ 
+      error: `Las categorias (category) válidas son: "Tintos", "Blancos", "Rosados" o "Espumantes"` 
+    });
+  }
+  vinos = await VinosManager.getVinos();
+
   if (aModificar.code) {
     let existe = vinos.find(
       (h) =>
@@ -207,7 +301,7 @@ router.delete("/:id", async (req, res) => {
   id = Number(id);
   if (isNaN(id)) {
     res.setHeader("Content-Type", "application/json");
-    return res.status(400).json({ error: `El id debe ser numérico` });
+    return res.status(400).json({ error: `El id ${id} debe ser numérico` });
   }
   let vinos;
   try {

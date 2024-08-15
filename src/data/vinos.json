@@ -30,7 +30,7 @@
           "status": true,
           "description": "Susana Balbo es una bodega familiar, especializada en la elaboración de vinos de alta gama, ubicada en Agrelo, en el corazón de Luján de Cuyo, a media hora de la ciudad de Mendoza, Argentina, al pie de la cordillera de Los Andes. Fue fundada en 1999 por Susana Balbo, primera mujer enóloga de la Argentina. Luego de más de 10 años de crecimiento constante en mercados internacionales, otro de los sueños de Susana se hizo realidad: sus hijos, José Lovaglio y Ana Lovaglio, decidieron continuar con la tradición familiar e integrarse al equipo. La nueva generación de la familia, junto a un equipo de 100 personas, continúa trabajando a diario en cuidar cada detalle para entregar vinos de la mejor calidad, apostando por el crecimiento de la industria del vino a través de la exploración, la innovación y la sustentabilidad.",
           "thumbnails": "./data/imagenes/Nosotros.jpeg",
-          "stock": 100
+          "stock": "50"
      },
      {
           "id": 4,
@@ -187,7 +187,11 @@
      },
      {
           "id": 19,
-          "code": "Trumpeter Chardonnay",
-          "category": "Blancos"
+          "code": "Alamos",
+          "category": "Tintos",
+          "title": "Catena Zapata",
+          "description": "excelente vino tinto",
+          "price": "5000",
+          "stock": "10"
      }
 ]
