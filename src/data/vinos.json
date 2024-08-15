@@ -174,5 +174,20 @@
           "description": "Caracterizado por sus 24 meses de guarda en tanque y otros 24 meses sobre borras en botella, Cruzat Cuvée se reconoce por ser un vino espumoso con cuerpo y aromas bien definidos, de carácter maduro y amable con persistentes burbujas que le dan una textura cremosa y firme.",
           "thumbnails": "./data/imagenes/CruzatCuveeNature.jpeg",
           "stock": 100
+     },
+     {
+          "id": 17,
+          "code": "Trumpeter Malbec",
+          "category": "Tintos"
+     },
+     {
+          "id": 18,
+          "code": "Trumpeter Merlot",
+          "category": "Tintos"
+     },
+     {
+          "id": 19,
+          "code": "Trumpeter Chardonnay",
+          "category": "Blancos"
      }
 ]

@@ -1,8 +1,8 @@
 import fs from "fs"
 class VinosManager{
     static path
-
     static async getVinos(){
+        console.log ("Ruta usada en getVinos:", this.path);
         if(fs.existsSync(this.path)){
             let vinos=JSON.parse(await fs.promises.readFile(this.path, {encoding:"utf-8"}))
             console.log("desde VinosManager Path: ")

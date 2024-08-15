@@ -4,7 +4,8 @@ import { error } from "console"
 
 const router = Router();
 
-VinosManager.path="../dao/VinosManager.js"
+// VinosManager.path="../dao/VinosManager.js"
+VinosManager.path="src/data/vinos.json"
 
 router.get("/", async (req, res) => {
   let vinos
