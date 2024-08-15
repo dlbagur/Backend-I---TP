@@ -33,14 +33,13 @@ class CartsManager {
 
     static async getCartVinos(cartId) {
         try {
-            const idC = Number(cartId);
+            let idC=Number(cartId)
+            console.log("idC",idC)
             const carts = await this.getCart();
-            const cart = carts.find(c => c.id === idC);  // Corregido para devolver el carrito
-    
+            const cart = carts.findIndex(c => c.id === idC);
             if (!cart) {
                 return null;
             }
-    
             return cart;
         } catch (error) {
             console.log(error);
@@ -49,36 +48,36 @@ class CartsManager {
     }
 
     static async addVinoToCart(cartId, vinoId) {
-        const carts = await this.getCart();  // Obtener todos los carritos
-        let idC = Number(cartId);
-        let idV = Number(vinoId);
-    
-        const cartIndex = carts.findIndex(c => c.id === idC);
-        if (cartIndex === -1) {
-            throw new Error(`No existe un carrito con el id ${cartId}`);
+        const cart = await this.getCartVinos(cartId);
+        let idC=Number(cartId)
+        let idV=Number(vinoId)
+
+        if (!cart) {
+            throw new Error(`No existe un carrito con el id ${idC}`);
         }
-    
-        const cart = carts[cartIndex]; // Obteniendo el carrito específico
-    
+
         const vinos = await VinosManager.getVinos();
-        const vinoExistente = vinos.find(v => v.id === idV);
-        if (!vinoExistente) {
+        const vinoId2 = vinos.find(v => v.id === idV);
+        if (!vinoId2) {
             throw new Error(`No existe vino con id ${vinoId}`);
         }
-    
+
         const vinoIndex = cart.vinos.findIndex(v => v.vino === idV);
         if (vinoIndex === -1) {
-            cart.vinos.push({ vino: idV, quantity: 1 });
+            cart.vinos.push({ vino: vinoId, quantity: 1 });
         } else {
             cart.vinos[vinoIndex].quantity += 1;
         }
-    
-        carts[cartIndex] = cart; // Actualizar el carrito específico en el array
-    
-        await fs.promises.writeFile(cartsFilePath, JSON.stringify(carts, null, 2)); // Escribir el array completo de carritos
-    
+
+        const carts = await this.getCart();
+        const cartIndex = carts.findIndex(c => c.id === idC);
+        carts[cartIndex] = cart;
+
+        await fs.promises.writeFile(cartsFilePath, JSON.stringify(carts, null, 2));
+
         return cart.vinos;
-    }    
+    }
+    
 }
 
 export default CartsManager;
