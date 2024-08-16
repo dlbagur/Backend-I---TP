@@ -126,12 +126,12 @@ router.post("/", async (req, res) => {
       error: 'Es obligatorio completar los campos title, description, code, price, stock y category' 
     });
   }
-  let precio = Number(vinoNuevo.price);
+  let precio = Number(vinoNuevo.price)
   if(isNaN(precio)) {
     {return res.status(400).json({ 
         error: 'El campo precio debe ser numérico' 
       })
-    } 
+    }
     }else{
       if(precio<0) {
         {return res.status(400).json({ 
@@ -140,8 +140,9 @@ router.post("/", async (req, res) => {
         }
       }
     }
-  let disponible = Number(vinoNuevo.stock);
-  if(isNaN(disponible)) {
+    vinoNuevo.price = precio
+    let disponible = Number(vinoNuevo.stock);
+    if(isNaN(disponible)) {
     {return res.status(400).json({ 
         error: 'El campo stock debe ser numérico' 
       })
@@ -154,6 +155,7 @@ router.post("/", async (req, res) => {
         }
       }
     }
+  vinoNuevo.stock = disponible 
   if (!categoriasValidas.includes(vinoNuevo.category)) {
     res.setHeader("Content-Type", "applcation/json");
     return res.status(400).json({ 
@@ -226,13 +228,7 @@ router.put("/:id", async (req, res) => {
   }
 
   // validaciones
-  if (!aModificar.title || !aModificar.description || !aModificar.code || !aModificar.price || !aModificar.stock || !aModificar.category) {
-    res.setHeader("Content-Type", "applcation/json");
-    return res.status(400).json({ 
-      error: 'Es obligatorio completar los campos title, description, code, price, stock y category' 
-    });
-  }
-
+  if (aModificar.price) {
   let precio = Number(aModificar.price);
   if(isNaN(precio)) {
     {return res.status(400).json({ 
@@ -247,6 +243,9 @@ router.put("/:id", async (req, res) => {
         }
       }
     }
+  aModificar.price=precio
+  }
+  if(aModificar.stock) {
   let disponible = Number(aModificar.stock);
   if(isNaN(disponible)) {
     {return res.status(400).json({ 
@@ -260,15 +259,18 @@ router.put("/:id", async (req, res) => {
           })
         }
       }
-    }
+    };
+    aModificar.stock=disponible
+  }
+  if(aModificar.category) {
   if (!categoriasValidas.includes(aModificar.category)) {
-    res.setHeader("Content-Type", "applcation/json");
-    return res.status(400).json({ 
-      error: `Las categorias (category) válidas son: "Tintos", "Blancos", "Rosados" o "Espumantes"` 
-    });
+      res.setHeader("Content-Type", "applcation/json");
+      return res.status(400).json({ 
+        error: `Las categorias (category) válidas son: "Tintos", "Blancos", "Rosados" o "Espumantes"` 
+      });
+    }
   }
   vinos = await VinosManager.getVinos();
-
   if (aModificar.code) {
     let existe = vinos.find(
       (h) =>

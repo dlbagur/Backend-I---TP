@@ -61,10 +61,15 @@ class CartsManager {
         const cart = carts[cartIndex]; // Obteniendo el carrito específico
     
         const vinos = await VinosManager.getVinos();
+        console.log("desde cartmanager: ", vinos)
         const vinoExistente = vinos.find(v => v.id === idV);
         if (!vinoExistente) {
             throw new Error(`No existe vino con id ${vinoId}`);
         }
+        // else
+        // {
+        //     if vinos.stock
+        // }
     
         const vinoIndex = cart.vinos.findIndex(v => v.vino === idV);
         if (vinoIndex === -1) {
