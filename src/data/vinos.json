@@ -206,35 +206,5 @@
                "./data/imagenes/CruzatCuveeNature.jpeg"
           ],
           "stock": 100
-     },
-     {
-          "id": 17,
-          "code": "Alamos",
-          "category": "Tintos",
-          "title": "Catena Zapata",
-          "description": "excelente vino de altura",
-          "price": 5000,
-          "stock": 5,
-          "Status": true
-     },
-     {
-          "id": 18,
-          "code": "Alamos Malbec",
-          "category": "Tintos",
-          "title": "Catena Zapata",
-          "description": "excelente vino tinto",
-          "price": "5000",
-          "stock": "1",
-          "Status": true
-     },
-     {
-          "id": 19,
-          "code": "Alamos Merlot",
-          "category": "Tintos",
-          "title": "Catena Zapata",
-          "description": "excelente vino tinto",
-          "price": "12000",
-          "stock": "1",
-          "Status": true
      }
 ]
