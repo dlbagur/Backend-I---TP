@@ -10,8 +10,10 @@ Se puede utilizar:
     localhost:8080/api/vinos/rosados
     localhost:8080/api/vinos/espumantes
 
-    localhost:8080/api/carts/n
-    localhost:8080/api/carts/x/vino/y
+post localhost:8080/api/carts
+get localhost:8080/api/carts/n
+put localhost:8080/api/carts/x/vino/y
 
 Para Post pueden utilizar la siguiente info, o usarla de modelo:
 {"code":"Alamos Malbec", "category":"Tintos","title":"Catena Zapata", "description":"excelente vino tinto", "price":5000, "stock":1}
+

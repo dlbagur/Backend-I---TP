@@ -62,7 +62,7 @@
           "thumbnails": [
                "./data/imagenes/AngelicaZapata-Chardonnay.png"
           ],
-          "stock": 100
+          "stock": 10
      },
      {
           "id": 6,
@@ -75,7 +75,7 @@
           "thumbnails": [
                "./data/imagenes/LagrimaCanela.jpeg"
           ],
-          "stock": 100
+          "stock": 1
      },
      {
           "id": 7,

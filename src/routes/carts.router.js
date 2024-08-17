@@ -22,11 +22,9 @@ router.get('/:cid', async (req, res) => {
     try {
         const cartId = req.params.cid;
         const vinos = await CartsManager.getCartVinos(cartId);
-
         if (!vinos) {
             return res.status(404).json({ error: 'El carrito está vacío' });
         }
-
         res.json(vinos);
     } catch (error) {
         console.log(error);
@@ -52,6 +50,5 @@ router.post('/:cid/vino/:vid', async (req, res) => {
         res.status(500).json({ error: 'Error agregando vino al carrito' });
     }
 });
-
 
 export default router;

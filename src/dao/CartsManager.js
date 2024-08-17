@@ -10,7 +10,6 @@ class CartsManager {
         if (fs.existsSync(this.path)) {
             let carrito=JSON.parse(await fs.promises.readFile(this.path, {encoding:"utf-8"}))
             return carrito
-            // return JSON.parse(await fs.promises.readFile(this.path, 'utf-8'));
         } else {
             return [];
         }
@@ -63,19 +62,26 @@ class CartsManager {
         const vinos = await VinosManager.getVinos();
         console.log("desde cartmanager: ", vinos)
         const vinoExistente = vinos.find(v => v.id === idV);
+        const saldoStock=vinoExistente.stock
+
         if (!vinoExistente) {
             throw new Error(`No existe vino con id ${vinoId}`);
         }
-        // else
-        // {
-        //     if vinos.stock
-        // }
-    
+
         const vinoIndex = cart.vinos.findIndex(v => v.vino === idV);
+        console.log("Saldo Stock: ", saldoStock)
         if (vinoIndex === -1) {
-            cart.vinos.push({ vino: idV, quantity: 1 });
+            if (saldoStock<1){
+                throw new Error(`No hay stock suficiente de vino con id ${vinoId}`);
+            }else{
+                cart.vinos.push({ vino: idV, quantity: 1 });
+            }
         } else {
-            cart.vinos[vinoIndex].quantity += 1;
+            if (saldoStock-1-cart.vinos[vinoIndex].quantity){
+                throw new Error(`No hay stock suficiente de vino con id ${vinoId}`);
+            }else{
+                cart.vinos[vinoIndex].quantity += 1;
+            }
         }
     
         carts[cartIndex] = cart; // Actualizar el carrito específico en el array
