@@ -1,95 +1,127 @@
 import fs from 'fs';
-// import path from 'path';
-import VinosManager from './VinosManager.js'; 
+import productsManager from './ProductsManager.js'; 
 
 const cartsFilePath = 'src/data/carts.json'
 
 class CartsManager {
-    static path
+    static path 
     static async getCart() {
-        if (fs.existsSync(this.path)) {
-            let carrito=JSON.parse(await fs.promises.readFile(this.path, {encoding:"utf-8"}))
-            return carrito
-        } else {
-            return [];
+        try {
+            if (fs.existsSync(this.path)) {
+                let carts=JSON.parse(await fs.promises.readFile(this.path, {encoding:"utf-8"}))
+                return carts
+            } else {
+                return [];
+            }
+        } catch (error) {
+            res.setHeader("Content-Type", "application/json");
+            return res.status(500).json({
+                error: `Error inesperado en el servidor. Intente más tarde`,
+                detalle: `${error.message}`,
+            });
         }
     }
 
     static async addCart() {
-        const carts = await this.getCart();
-        let id=1
-        if(carts.length>0){
-            id=Math.max(...carts.map(v=>v.id))+1
-        }
-        let nuevoCarrito={
-            id,
-            vinos: []
-        }
-        carts.push(nuevoCarrito);
-        await fs.promises.writeFile(cartsFilePath, JSON.stringify(carts, null, 2));
-        return nuevoCarrito;
-    }
-
-    static async getCartVinos(cartId) {
         try {
-            const idC = Number(cartId);
             const carts = await this.getCart();
-            const cart = carts.find(c => c.id === idC);  // Corregido para devolver el carrito
-    
-            if (!cart) {
-                return null;
+            let id=1
+            if(carts.length>0){
+                id=Math.max(...carts.map(v=>v.id))+1
             }
-    
-            return cart;
+            let nuevoCarrito={
+                id,
+                products: []
+            }
+            carts.push(nuevoCarrito);
+            await fs.promises.writeFile(cartsFilePath, JSON.stringify(carts, null, 2));
+            return nuevoCarrito;
         } catch (error) {
-            console.log(error);
-            throw new Error('Error recuperando el carrito de los vinos');
+            res.setHeader("Content-Type", "application/json");
+            return res.status(500).json({
+            error: `Error inesperado en el servidor. Intente más tarde`,
+            detalle: `${error.message}`,
+        });
         }
     }
 
-    static async addVinoToCart(cartId, vinoId) {
-        const carts = await this.getCart();  // Obtener todos los carritos
+    static async getCartProducts(cartId) {
+        let carts
+        try {
+            carts = await this.getCart();
+         } catch (error) {
+            res.setHeader("Content-Type", "application/json");
+            return res.status(500).json({
+                error: `Error recuperando el carrito de los productos`,
+                detalle: `${error.message}`,
+                })
+            }
+        let productos = []
         let idC = Number(cartId);
-        let idV = Number(vinoId);
-    
+        const cartIndex = carts.findIndex(c => c.id === idC);
+        if (cartIndex === -1) {
+            throw new Error(`No existe un carrito con el id ${cartId}`);
+        }else {
+            productos = carts.products
+        }
+        return productos;
+    }
+
+    static async addProductToCart(cartId, prodId) {
+        let carts
+        try {
+            carts = await this.getCart();
+        } catch (error) {
+            res.setHeader("Content-Type", "applcation/json");
+            return res.status(500).json({
+              error: `Error inesperado en el servidor. Intente mas tarde`,
+              detalle: `${error.mensaje}`,
+            });
+          }
+        let idC = Number(cartId);
+        let idP = Number(prodId);
         const cartIndex = carts.findIndex(c => c.id === idC);
         if (cartIndex === -1) {
             throw new Error(`No existe un carrito con el id ${cartId}`);
         }
-    
-        const cart = carts[cartIndex]; // Obteniendo el carrito específico
-    
-        const vinos = await VinosManager.getVinos();
-        console.log("desde cartmanager: ", vinos)
-        const vinoExistente = vinos.find(v => v.id === idV);
-        const saldoStock=vinoExistente.stock
-
-        if (!vinoExistente) {
-            throw new Error(`No existe vino con id ${vinoId}`);
+        const cart = carts[cartIndex];
+        let products
+        try {
+          products = await productsManager.getproducts();
+          } catch (error) {
+          res.setHeader("Content-Type", "applcation/json");
+          return res.status(500).json({
+            error: `Error inesperado en el servidor. Intente mas tarde`,
+            detalle: `${error.mensaje}`,
+          });
+        }
+        const productoExistente = products.find(p => p.id === idP);
+        const saldoStock=productoExistente.stock
+        if (!productoExistente) {
+            throw new Error(`No existe producto con id ${prodId}`);
         }
 
-        const vinoIndex = cart.vinos.findIndex(v => v.vino === idV);
-        console.log("Saldo Stock: ", saldoStock)
-        if (vinoIndex === -1) {
+        const productoIndex = cart.products.findIndex(p => p.products === idP);
+        if (productoIndex === -1) {
             if (saldoStock<1){
-                throw new Error(`No hay stock suficiente de vino con id ${vinoId}`);
+                throw new Error(`No hay stock suficiente del producto con id ${prodId}`);
             }else{
-                cart.vinos.push({ vino: idV, quantity: 1 });
+                cart.products.push({ products: idP, quantity: 1 });
             }
         } else {
-            if (saldoStock-1-cart.vinos[vinoIndex].quantity){
-                throw new Error(`No hay stock suficiente de vino con id ${vinoId}`);
+            if (saldoStock-1-cart.products[productoIndex].quantity < 0){
+                throw new Error(`No hay stock suficiente del producto con id ${prodId}`);
             }else{
-                cart.vinos[vinoIndex].quantity += 1;
+                cart.products[productoIndex].quantity += 1;
             }
         }
+
+        carts[cartIndex] = cart;
+ 
+        await fs.promises.writeFile(cartsFilePath, JSON.stringify(carts, null, 2));
     
-        carts[cartIndex] = cart; // Actualizar el carrito específico en el array
-    
-        await fs.promises.writeFile(cartsFilePath, JSON.stringify(carts, null, 2)); // Escribir el array completo de carritos
-    
-        return cart.vinos;
-    }    
+        return cart.products;
+    }       
 }
 
 export default CartsManager;
