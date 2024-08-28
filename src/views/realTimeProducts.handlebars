@@ -9,7 +9,7 @@
     <h1>Productos en Tiempo Real</h1>
     <ul id="product-list">
         {{#each products}}
-          <li data-id="{{this.id}}">{{this.id}} - {{this.code}} - {{this.title}}  - ${{this.price}}</li>
+          <li class="resto" data-id="{{this.id}}">{{this.id}} - {{this.code}} - Categoría: {{this.category}} - Bodega: {{this.title}}  - Precio: ${{this.price}} - Stock: {{this.stock}}</li>
         {{/each}}
     </ul>
 
@@ -84,8 +84,9 @@
         socket.on('agregarProducto', (producto) => {
             const productList = document.getElementById('product-list');
             const productItem = document.createElement('li');
-            productItem.textContent = `${producto.id} - ${producto.code} - ${producto.title} - $${producto.price}`;
+            productItem.textContent = `${producto.id} - ${producto.code} - Categoría: ${producto.category} - Bodega: ${producto.title}  - Precio: $${producto.price} - Stock: ${producto.stock}`;
             productItem.setAttribute('data-id', producto.id);
+            productItem.setAttribute('class', "resto");
             productList.appendChild(productItem);
         });
 

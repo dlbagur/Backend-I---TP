@@ -219,13 +219,13 @@
      },
      {
           "id": 18,
-          "code": "Numina Merlot",
-          "category": "Tintos",
+          "code": "Numina Malbec",
           "title": "Salentein",
-          "description": "excelente vino tinto",
-          "price": 20000,
+          "price": 17000,
+          "category": "Tintos",
           "stock": 10,
           "status": true,
+          "description": "Exquisito  vino",
           "thumbnails": []
      }
 ]
