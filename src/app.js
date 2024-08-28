@@ -2,6 +2,7 @@ import express from 'express';
 import { engine } from 'express-handlebars';
 import { Server } from 'socket.io';
 import productsRouter from './routes/products.router.js';
+import productsManager from "./dao/ProductsManager.js"
 import cartsRouter from './routes/carts.router.js';
 import { router as vistasRouter } from './routes/vistas.routers.js';
 
@@ -29,16 +30,27 @@ app.use('/api/products', productsRouter);
 app.use('/api/carts', cartsRouter);
 app.use('/', vistasRouter);
 
-// WebSocket
 io.on('connection', (socket) => {
     console.log('Nuevo cliente conectado');
     
-    socket.on('agregarProducto', (producto) => {
-        io.emit('agregarProducto', producto);
+    // Manejar la creación de un nuevo producto
+    socket.on('crearProducto', async (producto) => {
+        try {
+            const nuevoProducto = await productsManager.addproduct(producto);
+            io.emit('agregarProducto', nuevoProducto);
+        } catch (error) {
+            socket.emit('error', 'Error al agregar producto');
+        }
     });
 
-    socket.on('eliminarProducto', (idProducto) => {
-        io.emit('eliminarProducto', idProducto);
+    // Manejar la eliminación de un producto
+    socket.on('eliminarProducto', async (idProducto) => {
+        try {
+            await productsManager.deleteproduct(idProducto);
+            io.emit('eliminarProducto', idProducto);
+        } catch (error) {
+            socket.emit('error', 'Error al eliminar producto');
+        }
     });
 });
 

@@ -13,27 +13,69 @@
         {{/each}}
     </ul>
 
+    <!-- Formulario para agregar producto -->
+    <h2>Agregar Producto</h2>
+    <form id="add-product-form">
+        <input type="text" id="product-code" placeholder="Nombre del vino" required>
+        <input type="text" id="product-category" placeholder="Categoría" required>
+        <input type="text" id="product-title" placeholder="Bodega del vino" required>
+        <input type="text" id="product-description" placeholder="Descripción" required>
+        <input type="number" id="product-price" placeholder="Precio" required>
+        <input type="number" id="product-stock" placeholder="Stock" required>
+        <button type="submit">Agregar Producto</button>
+    </form>
+
+    <!-- Formulario para eliminar producto -->
+    <h2>Eliminar Producto</h2>
+    <form id="delete-product-form">
+        <input type="number" id="delete-product-id" placeholder="ID del producto a eliminar" required>
+        <button type="submit">Eliminar Producto</button>
+    </form>
+
     <script src="/socket.io/socket.io.js"></script>
     <script>
         const socket = io();
 
-        // Agregar un nuevo producto
+
+        // Manejar la adición de un nuevo producto
         socket.on('agregarProducto', (producto) => {
-            console.log("Producto agregado recibido: ", producto);
             const productList = document.getElementById('product-list');
             const productItem = document.createElement('li');
             productItem.textContent = `${producto.id} - ${producto.code} - ${producto.title} - $${producto.price}`;
             productItem.setAttribute('data-id', producto.id);
             productList.appendChild(productItem);
-        });
+});
 
-        // Eliminar un producto
+        // Manejar la eliminación de un producto
         socket.on('eliminarProducto', (idProducto) => {
             const productList = document.getElementById('product-list');
             const itemToRemove = productList.querySelector(`li[data-id="${idProducto}"]`);
             if (itemToRemove) {
                 productList.removeChild(itemToRemove);
             }
+        });
+
+        // Enviar nuevo producto a través de WebSockets
+        document.getElementById('add-product-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const product = {
+                code: document.getElementById('product-code').value,
+                category: document.getElementById('product-category').value
+                title: document.getElementById('product-title').value,
+                price: parseFloat(document.getElementById('product-price').value),
+                status: true,
+                description: document.getElementById('product-description').value,
+                thumbnails = [],
+                stock: parseInt(document.getElementById('product-stock').value),
+            };
+            socket.emit('crearProducto', product);
+        });
+
+        // Enviar eliminación de producto a través de WebSockets
+        document.getElementById('delete-product-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const idProducto = parseInt(document.getElementById('delete-product-id').value);
+            socket.emit('eliminarProducto', idProducto);
         });
     </script>
 </body>

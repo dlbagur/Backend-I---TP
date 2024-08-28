@@ -236,5 +236,14 @@
           "price": 20000,
           "stock": 10,
           "Status": true
+     },
+     {
+          "id": 22,
+          "code": "Lagrima Canela",
+          "title": "Bressia",
+          "price": 28000,
+          "stock": 10,
+          "category": "Tintos",
+          "status": true
      }
 ]

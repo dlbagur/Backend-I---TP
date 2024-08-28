@@ -34,14 +34,15 @@ class ProductsManager{
         if(products.length>0){
             id=Math.max(...products.map(v=>v.id))+1
         }
-        let nuevoproducto={
+        let nuevoProducto={
             id,
             ...product
         }
-        products.push(nuevoproducto)
+        nuevoProducto.status=true
+        products.push(nuevoProducto)
         await fs.promises.writeFile(this.path, JSON.stringify(products, null, 5))
 
-        return nuevoproducto
+        return nuevoProducto
     }
 
     static async updateproduct(id, aModificar={}){
