@@ -13,9 +13,9 @@
         {{/each}}
     </ul>
 
-    <!-- Formulario para agregar producto -->
+    <!-- Formulario para agregar productos -->
     <h2>Agregar Producto</h2>
-    <form id="add-product-form">
+    <form id="form-agrego-producto">
         <input type="text" id="product-code" placeholder="Nombre del vino" required>
         <input type="text" id="product-category" placeholder="Categoría" required>
         <input type="text" id="product-title" placeholder="Bodega del vino" required>
@@ -25,7 +25,7 @@
         <button type="submit">Agregar Producto</button>
     </form>
 
-    <!-- Formulario para eliminar producto -->
+    <!-- Formulario para eliminar productos -->
     <h2>Eliminar Producto</h2>
     <form id="delete-product-form">
         <input type="number" id="delete-product-id" placeholder="ID del producto a eliminar" required>
@@ -36,30 +36,10 @@
     <script>
         const socket = io();
 
-
-        // Manejar la adición de un nuevo producto
-        socket.on('agregarProducto', (producto) => {
-            const productList = document.getElementById('product-list');
-            const productItem = document.createElement('li');
-            productItem.textContent = `${producto.id} - ${producto.code} - ${producto.title} - $${producto.price}`;
-            productItem.setAttribute('data-id', producto.id);
-            productList.appendChild(productItem);
-});
-
-        // Manejar la eliminación de un producto
-        socket.on('eliminarProducto', (idProducto) => {
-            const productList = document.getElementById('product-list');
-            const itemToRemove = productList.querySelector(`li[data-id="${idProducto}"]`);
-            if (itemToRemove) {
-                productList.removeChild(itemToRemove);
-            }
-        });
-
         // Enviar nuevo producto a través de WebSockets
-        document.getElementById('add-product-form').addEventListener('submit', (e) => {
+        document.getElementById('form-agrego-producto').addEventListener('submit', (e) => {
             e.preventDefault();
 
-            // Obtención y limpieza de valores
             const code = document.getElementById('product-code').value.trim();
             const title = document.getElementById('product-title').value.trim();
             const price = parseFloat(document.getElementById('product-price').value);
@@ -69,45 +49,53 @@
             const description = document.getElementById('product-description').value.trim();
             const thumbnails = [];
 
-            // Validación de campos vacíos o inválidos
             if (!code || !title || isNaN(price) || isNaN(stock) || !category) {
                 alert('Todos los campos son obligatorios y deben ser válidos.');
                 return;
             }
 
-            // Validación de valores numéricos
             if (price < 0) {
-                console.log('Error en validación de precio');
                 alert('El precio no puede ser negativo.');
                 return;
             }
             if (stock < 0) {
-                console.log('Error en validación de stock');
                 alert('El stock no puede ser negativo.');
                 return;
             }
 
-            // Validación de categoría
             const categoriasValidas = ["tintos", "blancos", "rosados", "espumantes"];
             const categoryLetraChica = category.toLowerCase();
             if (!categoriasValidas.includes(categoryLetraChica)) {
                 alert('Las categorías válidas son: "Tintos", "Blancos", "Rosados" o "Espumantes".');
                 return;
             }
-
-            // Creación del objeto producto solo si todas las validaciones son correctas
             const product = { code, title, price, category, stock, status, description, thumbnails };
-
-            // Envío del producto a través de WebSocket
             socket.emit('crearProducto', product);
         });
-
 
         // Enviar eliminación de producto a través de WebSockets
         document.getElementById('delete-product-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const idProducto = parseInt(document.getElementById('delete-product-id').value);
             socket.emit('eliminarProducto', idProducto);
+        });
+
+        // Actualizar la vista por la adición de un nuevo producto
+        socket.on('agregarProducto', (producto) => {
+            const productList = document.getElementById('product-list');
+            const productItem = document.createElement('li');
+            productItem.textContent = `${producto.id} - ${producto.code} - ${producto.title} - $${producto.price}`;
+            productItem.setAttribute('data-id', producto.id);
+            productList.appendChild(productItem);
+        });
+
+        // Actualizar la vista por la eliminación de un producto
+        socket.on('eliminarProducto', (idProducto) => {
+            const productList = document.getElementById('product-list');
+            const itemToRemove = productList.querySelector(`li[data-id="${idProducto}"]`);
+            if (itemToRemove) {
+                productList.removeChild(itemToRemove);
+            }
         });
     </script>
 </body>

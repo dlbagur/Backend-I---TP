@@ -172,7 +172,7 @@ router.post("/", async (req, res) => {
     res.setHeader("Content-Type", "applcation/json");
     return res
       .status(400)
-      .json({ error: `Ya existe un product de nombre ${productNuevo.code}` });
+      .json({ error: `Ya existe un producto de nombre ${productNuevo.code}` });
   }
   let newProd
   try {

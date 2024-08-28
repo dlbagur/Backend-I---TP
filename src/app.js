@@ -33,17 +33,18 @@ app.use('/', vistasRouter);
 io.on('connection', (socket) => {
     console.log('Nuevo cliente conectado');
     
-    // Manejar la creación de un nuevo producto
+    // Creación de un nuevo producto
     socket.on('crearProducto', async (producto) => {
         try {
-            const nuevoProducto = await productsManager.addproduct(producto);
+            const nuevoProducto = await productsManager.addproduct(producto);            
             io.emit('agregarProducto', nuevoProducto);
         } catch (error) {
+            console.log("Error ", error)
             socket.emit('error', 'Error al agregar producto');
         }
     });
 
-    // Manejar la eliminación de un producto
+    // Eliminación de un producto
     socket.on('eliminarProducto', async (idProducto) => {
         try {
             await productsManager.deleteproduct(idProducto);

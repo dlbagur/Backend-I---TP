@@ -27,9 +27,15 @@ class ProductsManager{
             res.setHeader("Content-Type", "application/json");
             return res.status(500).json({
             error: `Error inesperado en el servidor. Intente más tarde`,
-            detalle: `${error.message}`,        
+            detalle: `${error.message}`,
             })
         }
+
+        let existe = products.find((v) => v.code.toLowerCase() === product.code.toLowerCase());
+        if (existe) {
+             throw new Error(`Error: ya existe el producto: ${product.code}`);
+        }
+
         let id=1
         if(products.length>0){
             id=Math.max(...products.map(v=>v.id))+1
@@ -79,7 +85,8 @@ class ProductsManager{
             res.setHeader("Content-Type", "application/json");
             return res.status(500).json({
                 error: `Error inesperado en el servidor. Intente más tarde`,
-                detalle: `${error.message}`,        })
+                detalle: `${error.message}`,        
+            })
         }
         let indiceproduct=products.findIndex(h=>h.id===id)
         if(indiceproduct===-1){
