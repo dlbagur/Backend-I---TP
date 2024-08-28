@@ -18,6 +18,15 @@
   },
   {
     "id": 2,
-    "products": []
+    "products": [
+      {
+        "products": 10,
+        "quantity": 1
+      },
+      {
+        "products": 15,
+        "quantity": 2
+      }
+    ]
   }
 ]

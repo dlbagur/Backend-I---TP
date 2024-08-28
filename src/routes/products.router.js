@@ -1,6 +1,7 @@
 import { Router } from "express";
 import productsManager from "../dao/ProductsManager.js"
 import { error } from "console"
+import { io } from '../app.js';
 
 const router = Router();
 
@@ -172,18 +173,17 @@ router.post("/", async (req, res) => {
       .status(400)
       .json({ error: `Ya existe un product de nombre ${productNuevo.code}` });
   }
-
+  let newProd
   try {
-    await productsManager.addproduct(productNuevo);
+    newProd= await productsManager.addproduct(productNuevo);
+    io.emit('agregarProducto', newProd);
     res.setHeader("Content-Type", "applcation/json");
-    return res.status(200).json({ productNuevo });
+    return res.status(200).json({ newProd });
   } catch (error) {
     res.setHeader("Content-Type", "applcation/json");
-    return res.status(500).json({
-      error: `Error inesperado en el servidor! Intente mas tarde`,
-      detalle: `${error.mensaje}`,
-    });
+    res.status(500).json({ error: `Error ${error.mensaje} al agregar producto ${productNuevo}` });
   }
+
 });
 
 router.put("/:id", async (req, res) => {
@@ -283,6 +283,38 @@ router.put("/:id", async (req, res) => {
       detalle: `${error.message}`,
     });
   }
+});
+
+router.delete("/:id", async (req, res) => {
+  let { id } = req.params;
+  id = Number(id);
+  if (isNaN(id)) {
+      res.setHeader("Content-Type", "application/json");
+    return res.status(400).json({ error: `id ${id} debe ser numérico` });
+  }
+  let products
+  try {
+      products = await productsManager.getproducts();
+  } catch (error) {
+      res.setHeader("Content-Type", "application/json");
+    return res.status(500).json({
+      error: `Error inesperado en el servidor. Intente más tarde`,
+      detalle: `${error.message}`,
+    });
+  }
+  let product = products.find((h) => h.id === id);
+  if (!product) {
+    res.setHeader("Content-Type", "application/json");
+    return res.status(400).json({ error: `No existe product con id: ${id}` });
+  }
+  try {
+    await productsManager.deleteproduct(id);
+    io.emit('eliminarProducto', id);
+    res.status(200).json({ mensaje: 'Producto eliminado' });
+  } catch (error) {
+      res.status(500).json({ error: 'Error al eliminar producto' });
+  }
+  
 });
 
 export default router;

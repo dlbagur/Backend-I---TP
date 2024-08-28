@@ -208,13 +208,33 @@
           "stock": 100
      },
      {
-          "id": 18,
-          "code": "Alamos Merlot",
+          "id": 17,
+          "code": "Alamos Pinot Noir",
           "category": "Tintos",
           "title": "Catena Zapata",
           "description": "excelente vino tinto",
-          "price": 12000,
-          "stock": 1,
+          "price": 5000,
+          "stock": 10,
+          "Status": true
+     },
+     {
+          "id": 20,
+          "code": "Numina Cabernet Sauvignon",
+          "category": "Tintos",
+          "title": "Salentein",
+          "description": "excelente vino tinto",
+          "price": 20000,
+          "stock": 10,
+          "Status": true
+     },
+     {
+          "id": 21,
+          "code": "Numina Merlot",
+          "category": "Tintos",
+          "title": "Salentein",
+          "description": "excelente vino tinto",
+          "price": 20000,
+          "stock": 10,
           "Status": true
      }
 ]

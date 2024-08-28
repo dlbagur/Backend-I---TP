@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Products</title>
+</head>
+<body>
+    <h1>Productos en Tiempo Real</h1>
+    <ul id="product-list">
+        {{#each products}}
+          <li data-id="{{this.id}}">{{this.id}} - {{this.code}} - {{this.title}}  - ${{this.price}}</li>
+        {{/each}}
+    </ul>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        // Agregar un nuevo producto
+        socket.on('agregarProducto', (producto) => {
+            console.log("Producto agregado recibido: ", producto);
+            const productList = document.getElementById('product-list');
+            const productItem = document.createElement('li');
+            productItem.textContent = `${producto.id} - ${producto.code} - ${producto.title} - $${producto.price}`;
+            productItem.setAttribute('data-id', producto.id);
+            productList.appendChild(productItem);
+        });
+
+        // Eliminar un producto
+        socket.on('eliminarProducto', (idProducto) => {
+            const productList = document.getElementById('product-list');
+            const itemToRemove = productList.querySelector(`li[data-id="${idProducto}"]`);
+            if (itemToRemove) {
+                productList.removeChild(itemToRemove);
+            }
+        });
+    </script>
+</body>
+</html>

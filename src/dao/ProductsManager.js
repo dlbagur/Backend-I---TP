@@ -39,7 +39,6 @@ class ProductsManager{
             ...product
         }
         products.push(nuevoproducto)
-
         await fs.promises.writeFile(this.path, JSON.stringify(products, null, 5))
 
         return nuevoproducto
@@ -70,6 +69,7 @@ class ProductsManager{
     }
 
     static async deleteproduct(id){
+        id=Number(id)
         let products 
         try {
             products = await this.getproducts()
@@ -85,7 +85,7 @@ class ProductsManager{
         }
         products=products.filter(h=>h.id!==id)   
         await fs.promises.writeFile(this.path, JSON.stringify(products, null, 5))
-        return 1
+        return products
     }
 }
 
