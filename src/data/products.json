@@ -241,9 +241,11 @@
           "id": 22,
           "code": "Lagrima Canela",
           "title": "Bressia",
-          "price": 28000,
-          "stock": 10,
+          "price": 25000,
           "category": "Tintos",
-          "status": true
+          "stock": 10,
+          "status": true,
+          "description": "Exquisito  vino",
+          "thumbnails": []
      }
 ]

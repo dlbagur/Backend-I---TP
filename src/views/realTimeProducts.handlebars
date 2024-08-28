@@ -58,18 +58,50 @@
         // Enviar nuevo producto a través de WebSockets
         document.getElementById('add-product-form').addEventListener('submit', (e) => {
             e.preventDefault();
-            const product = {
-                code: document.getElementById('product-code').value,
-                category: document.getElementById('product-category').value
-                title: document.getElementById('product-title').value,
-                price: parseFloat(document.getElementById('product-price').value),
-                status: true,
-                description: document.getElementById('product-description').value,
-                thumbnails = [],
-                stock: parseInt(document.getElementById('product-stock').value),
-            };
+
+            // Obtención y limpieza de valores
+            const code = document.getElementById('product-code').value.trim();
+            const title = document.getElementById('product-title').value.trim();
+            const price = parseFloat(document.getElementById('product-price').value);
+            const stock = parseInt(document.getElementById('product-stock').value);
+            const category = document.getElementById('product-category').value.trim();
+            const status = true;
+            const description = document.getElementById('product-description').value.trim();
+            const thumbnails = [];
+
+            // Validación de campos vacíos o inválidos
+            if (!code || !title || isNaN(price) || isNaN(stock) || !category) {
+                alert('Todos los campos son obligatorios y deben ser válidos.');
+                return;
+            }
+
+            // Validación de valores numéricos
+            if (price < 0) {
+                console.log('Error en validación de precio');
+                alert('El precio no puede ser negativo.');
+                return;
+            }
+            if (stock < 0) {
+                console.log('Error en validación de stock');
+                alert('El stock no puede ser negativo.');
+                return;
+            }
+
+            // Validación de categoría
+            const categoriasValidas = ["tintos", "blancos", "rosados", "espumantes"];
+            const categoryLetraChica = category.toLowerCase();
+            if (!categoriasValidas.includes(categoryLetraChica)) {
+                alert('Las categorías válidas son: "Tintos", "Blancos", "Rosados" o "Espumantes".');
+                return;
+            }
+
+            // Creación del objeto producto solo si todas las validaciones son correctas
+            const product = { code, title, price, category, stock, status, description, thumbnails };
+
+            // Envío del producto a través de WebSocket
             socket.emit('crearProducto', product);
         });
+
 
         // Enviar eliminación de producto a través de WebSockets
         document.getElementById('delete-product-form').addEventListener('submit', (e) => {

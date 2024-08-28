@@ -39,6 +39,7 @@ class ProductsManager{
             ...product
         }
         nuevoProducto.status=true
+        nuevoProducto.thumbnails=[]
         products.push(nuevoProducto)
         await fs.promises.writeFile(this.path, JSON.stringify(products, null, 5))
 

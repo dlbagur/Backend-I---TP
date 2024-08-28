@@ -111,7 +111,8 @@ router.get("/:id", async (req, res) => {
 
 router.post("/", async (req, res) => {
   const productNuevo = req.body
-  productNuevo.Status = true
+  productNuevo.status = true
+  productNuevo.thumbnails = []
   if (!productNuevo.title || !productNuevo.description || !productNuevo.code || !productNuevo.price || !productNuevo.stock || !productNuevo.category) {
     res.setHeader("Content-Type", "applcation/json");
     return res.status(400).json({ 
