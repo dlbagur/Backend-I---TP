@@ -4,100 +4,68 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Real-Time Products</title>
+    <link rel="stylesheet" href="../public/estilos/estilos.css">
 </head>
 <body>
     <h1>Productos en Tiempo Real</h1>
-    <ul id="product-list">
+        <ul id="product-list">
         {{#each products}}
-          <li class="resto" data-id="{{this.id}}">{{this.id}} - {{this.code}} - Categoría: {{this.category}} - Bodega: {{this.title}}  - Precio: ${{this.price}} - Stock: {{this.stock}}</li>
+            <li class="card-io" data-id="{{this.id}}">
+            <span class="product-code-io">{{this.code}}</span>
+            <br> 
+            <span class="product-category-io">{{this.category}}</span> - 
+            <span class="product-title-io">{{this.title}}</span>
+            <br>
+            <span class="product-description-io">Notas: {{this.description}}</span>
+            <br> 
+            Precio: $<span class="product-price-io">{{this.price}}</span> - 
+            Stock: <span class="product-stock-io">{{this.stock}}</span>
+            <div class="card-menu">
+                <button class="edit-btn" data-id="{{this.id}}">Editar</button>
+                <button class="delete-btn" data-id="{{this.id}}">Eliminar</button>
+            </div>
+            </li>
         {{/each}}
-    </ul>
+        </ul>
 
-    <!-- Formulario para agregar productos -->
-    <h2>Agregar Producto</h2>
-    <form id="form-agrego-producto">
-        <input type="text" id="product-code" placeholder="Nombre del vino" required>
-        <input type="text" id="product-category" placeholder="Categoría" required>
-        <input type="text" id="product-title" placeholder="Bodega del vino" required>
-        <input type="text" id="product-description" placeholder="Descripción" required>
-        <input type="number" id="product-price" placeholder="Precio" required>
-        <input type="number" id="product-stock" placeholder="Stock" required>
-        <button type="submit">Agregar Producto</button>
-    </form>
+        <!-- Botón para modificar un producto-->
+        <div id="productModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Modificar Producto</h2>
+                <form id="form-modificar-producto">
+                    <input type="text" id="edit-product-code" placeholder="Código del producto" required>
+                    <input type="text" id="edit-product-category" placeholder="Categoría" required>
+                    <input type="text" id="edit-product-title" placeholder="Título del producto" required>
+                    <input type="text" id="edit-product-description" placeholder="Descripción" required>
+                    <input type="number" id="edit-product-price" placeholder="Precio" required>
+                    <input type="number" id="edit-product-stock" placeholder="Stock" required>
+                    <button type="submit">Modificar Producto</button>
+                </form>
+            </div>
+        </div>
 
-    <!-- Formulario para eliminar productos -->
-    <h2>Eliminar Producto</h2>
-    <form id="delete-product-form">
-        <input type="number" id="delete-product-id" placeholder="ID del producto a eliminar" required>
-        <button type="submit">Eliminar Producto</button>
-    </form>
+        <!-- Botón para agregar producto -->
+        <button id="openAddProductModal" class="add-btn">Agregar Producto</button>
+
+        <!-- Modal para agregar producto -->
+        <div id="addProductModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Agregar Nuevo Producto</h2>
+            <form id="form-agrego-producto">
+                <input type="text" id="product-code" placeholder="Marca del producto" required>
+                <input type="text" id="product-category" placeholder="Categoría" required>
+                <input type="text" id="product-title" placeholder="Bodega del producto" required>
+                <input type="text" id="product-description" placeholder="Descripción" required>
+                <input type="number" id="product-price" placeholder="Precio" required>
+                <input type="number" id="product-stock" placeholder="Stock" required>
+                <button type="submit">Agregar Producto</button>
+            </form>
+        </div>
+        </div>
 
     <script src="/socket.io/socket.io.js"></script>
-    <script>
-        const socket = io();
-
-        // Enviar nuevo producto a través de WebSockets
-        document.getElementById('form-agrego-producto').addEventListener('submit', (e) => {
-            e.preventDefault();
-
-            const code = document.getElementById('product-code').value.trim();
-            const title = document.getElementById('product-title').value.trim();
-            const price = parseFloat(document.getElementById('product-price').value);
-            const stock = parseInt(document.getElementById('product-stock').value);
-            const category = document.getElementById('product-category').value.trim();
-            const status = true;
-            const description = document.getElementById('product-description').value.trim();
-            const thumbnails = [];
-
-            if (!code || !title || isNaN(price) || isNaN(stock) || !category) {
-                alert('Todos los campos son obligatorios y deben ser válidos.');
-                return;
-            }
-
-            if (price < 0) {
-                alert('El precio no puede ser negativo.');
-                return;
-            }
-            if (stock < 0) {
-                alert('El stock no puede ser negativo.');
-                return;
-            }
-
-            const categoriasValidas = ["tintos", "blancos", "rosados", "espumantes"];
-            const categoryLetraChica = category.toLowerCase();
-            if (!categoriasValidas.includes(categoryLetraChica)) {
-                alert('Las categorías válidas son: "Tintos", "Blancos", "Rosados" o "Espumantes".');
-                return;
-            }
-            const product = { code, title, price, category, stock, status, description, thumbnails };
-            socket.emit('crearProducto', product);
-        });
-
-        // Enviar eliminación de producto a través de WebSockets
-        document.getElementById('delete-product-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const idProducto = parseInt(document.getElementById('delete-product-id').value);
-            socket.emit('eliminarProducto', idProducto);
-        });
-
-        // Actualizar la vista por la adición de un nuevo producto
-        socket.on('agregarProducto', (producto) => {
-            const productList = document.getElementById('product-list');
-            const productItem = document.createElement('li');
-            productItem.textContent = `${producto.id} - ${producto.code} - Categoría: ${producto.category} - Bodega: ${producto.title}  - Precio: $${producto.price} - Stock: ${producto.stock}`;
-            productItem.setAttribute('data-id', producto.id);
-            productItem.setAttribute('class', "resto");
-            productList.appendChild(productItem);
-        });
-
-        // Actualizar la vista por la eliminación de un producto
-        socket.on('eliminarProducto', (idProducto) => {
-            const productList = document.getElementById('product-list');
-            const itemToRemove = productList.querySelector(`li[data-id="${idProducto}"]`);
-            if (itemToRemove) {
-                productList.removeChild(itemToRemove);
-            }
-        });
-    </script>
+    <script src="/scripts/realTimeProducts.js"></script>
 </body>
 </html>

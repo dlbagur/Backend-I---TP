@@ -30,13 +30,13 @@
           "category": "Tintos",
           "title": "Susana Balbo",
           "code": "Nosotros",
-          "price": 280000,
+          "price": 200000,
           "status": true,
           "description": "Susana Balbo es una bodega familiar, especializada en la elaboración de vinos de alta gama, ubicada en Agrelo, en el corazón de Luján de Cuyo, a media hora de la ciudad de Mendoza, Argentina, al pie de la cordillera de Los Andes. Fue fundada en 1999 por Susana Balbo, primera mujer enóloga de la Argentina. Luego de más de 10 años de crecimiento constante en mercados internacionales, otro de los sueños de Susana se hizo realidad: sus hijos, José Lovaglio y Ana Lovaglio, decidieron continuar con la tradición familiar e integrarse al equipo. La nueva generación de la familia, junto a un equipo de 100 personas, continúa trabajando a diario en cuidar cada detalle para entregar vinos de la mejor calidad, apostando por el crecimiento de la industria del vino a través de la exploración, la innovación y la sustentabilidad.",
           "thumbnails": [
                "./data/imagenes/Nosotros.jpeg"
           ],
-          "stock": 5
+          "stock": 50
      },
      {
           "id": 4,
@@ -208,24 +208,36 @@
           "stock": 100
      },
      {
-          "id": 17,
-          "code": "Alamos Pinot Noir",
-          "category": "Tintos",
-          "title": "Catena Zapata",
-          "description": "excelente vino tinto",
-          "price": 5000,
-          "stock": 10,
-          "Status": true
-     },
-     {
           "id": 18,
-          "code": "Numina Malbec",
-          "title": "Salentein",
-          "price": 17000,
+          "code": "Numina Gran Corte",
           "category": "Tintos",
+          "title": "Salentein",
+          "description": "Exquisito  vino",
+          "price": 25000,
           "stock": 10,
           "status": true,
-          "description": "Exquisito  vino",
+          "thumbnails": []
+     },
+     {
+          "id": 19,
+          "code": "Lagrima Canela Tinto",
+          "category": "Tintos",
+          "title": "Bressia",
+          "description": "Una alternativa recomendable",
+          "price": 20000,
+          "stock": 10,
+          "status": true,
+          "thumbnails": []
+     },
+     {
+          "id": 20,
+          "code": "Numina Malbec",
+          "category": "Tintos",
+          "title": "Salentein",
+          "description": "Una alternativa recomendable",
+          "price": 18000,
+          "stock": 1,
+          "status": true,
           "thumbnails": []
      }
 ]

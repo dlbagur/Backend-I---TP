@@ -8,14 +8,19 @@
 </head>
 <body>
     <h1>Lista de Productos</h1>
-    <ul>
-        {{#each products}}
-            <li class="producto"><strong>{{this.code}}</strong></li>
-            <li class="resto">Bodega: {{this.title}}</li>
-            <li class="resto">Descripción: {{this.description}}</li>
-            <li class="resto"><strong>Precio Unitario: ${{this.price}}</strong></li>
-
-        {{/each}}
-    </ul>
+        <ul id="product-list">
+            {{#each products}}
+                <li class="card" data-id="{{this.id}}"> 
+                    <span class="product-code">{{this.code}}</span> - 
+                    <span class="product-category">{{this.category}}</span> - 
+                    <span class="product-title">{{this.title}}</span>
+                    <br>
+                    <span class="product-description">Notas: {{this.description}}</span>
+                    <br> 
+                    Precio: $<span class="product-price">{{this.price}}</span> - 
+                    Stock: <span class="product-stock">{{this.stock}}</span>
+                </li>
+            {{/each}}
+        </ul>
 </body>
 </html>

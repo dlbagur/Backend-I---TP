@@ -44,6 +44,18 @@ io.on('connection', (socket) => {
         }
     });
 
+    // Modificación de un producto
+    socket.on('modificarProducto', async (producto) => {
+        try {
+            const { id, ...dataToUpdate } = producto;
+            const aModificarProducto = await productsManager.updateproduct(id, dataToUpdate);            
+            io.emit('productoModificado', aModificarProducto);
+        } catch (error) {
+            console.log("Error ", error)
+            socket.emit('error', 'Error al modificar producto');
+        }
+    });
+
     // Eliminación de un producto
     socket.on('eliminarProducto', async (idProducto) => {
         try {
