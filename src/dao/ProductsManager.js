@@ -1,54 +1,47 @@
-import fs from "fs"
+import fs from "fs";
 
-class ProductsManager{
-    static path
-    static async getproducts(){
+class ProductsManager {
+    static path;
+
+    static async getproducts() {
         try {
             if (fs.existsSync(this.path)) {
-                let products=JSON.parse(await fs.promises.readFile(this.path, {encoding:"utf-8"}))
-                return products
+                let products = JSON.parse(await fs.promises.readFile(this.path, { encoding: "utf-8" }));
+                return products;
             } else {
                 return [];
             }
         } catch (error) {
-            res.setHeader("Content-Type", "application/json");
-            return res.status(500).json({
-                error: `Error inesperado en el servidor. Intente más tarde`,
-                detalle: `${error.message}`,
-            });
+            throw new Error(`Error inesperado en el servidor. Detalle: ${error.message}`);
         }
     }
 
-    static async addproduct(product={}){
-        let products
+    static async addproduct(product = {}) {
+        let products;
         try {
-            products=await this.getproducts()
+            products = await this.getproducts();
         } catch (error) {
-            res.setHeader("Content-Type", "application/json");
-            return res.status(500).json({
-            error: `Error inesperado en el servidor. Intente más tarde`,
-            detalle: `${error.message}`,
-            })
+            throw new Error(`Error inesperado en el servidor durante add. Detalle: ${error.message}`);
         }
 
         let existe = products.find((v) => v.code.toLowerCase() === product.code.toLowerCase());
         if (existe) {
-             throw new Error(`Error: ya existe el producto: ${product.code}`);
+            throw new Error(`Error: ya existe el producto: ${product.code}`);
         }
 
-        let id=1
-        if(products.length>0){
-            id=Math.max(...products.map(v=>v.id))+1
+        let id = 1;
+        if (products.length > 0) {
+            id = Math.max(...products.map(v => v.id)) + 1;
         }
-        let nuevoProducto={
+        let nuevoProducto = {
             id,
             ...product
-        }
-        nuevoProducto.status=true
-        nuevoProducto.thumbnails=[]
-        products.push(nuevoProducto)
-        await fs.promises.writeFile(this.path, JSON.stringify(products, null, 5))
-        return nuevoProducto
+        };
+        nuevoProducto.status = true;
+        nuevoProducto.thumbnails = [];
+        products.push(nuevoProducto);
+        await fs.promises.writeFile(this.path, JSON.stringify(products, null, 5));
+        return nuevoProducto;
     }
 
     static async updateproduct(id, aModificar = {}) {
@@ -56,14 +49,14 @@ class ProductsManager{
         try {
             products = await this.getproducts();
         } catch (error) {
-            throw new Error(`Error inesperado en el servidor durante update. Intente más tarde. Detalle: ${error.message}`);
+            throw new Error(`Error inesperado en el servidor durante update. Detalle: ${error.message}`);
         }
-        id=Number(id)
+        id = Number(id);
         let indiceProducto = products.findIndex(h => h.id === id);
         if (indiceProducto === -1) {
             throw new Error(`Error: no existe el id: ${id}`);
         }
-    
+
         products[indiceProducto] = {
             ...products[indiceProducto],
             ...aModificar,
@@ -74,26 +67,124 @@ class ProductsManager{
         return products[indiceProducto];
     }
 
-    static async deleteproduct(id){
-        id=Number(id)
-        let products 
+    static async deleteproduct(id) {
+        id = Number(id);
+        let products;
         try {
-            products = await this.getproducts()
+            products = await this.getproducts();
         } catch (error) {
-            res.setHeader("Content-Type", "application/json");
-            return res.status(500).json({
-                error: `Error inesperado en el servidor. Intente más tarde`,
-                detalle: `${error.message}`,        
-            })
+            throw new Error(`Error inesperado en el servidor durante delete. Detalle: ${error.message}`);
         }
-        let indiceproduct=products.findIndex(h=>h.id===id)
-        if(indiceproduct===-1){
-            throw new Error(`Error: no existe id ${id}`)
+        let indiceproduct = products.findIndex(h => h.id === id);
+        if (indiceproduct === -1) {
+            throw new Error(`Error: no existe id ${id}`);
         }
-        products=products.filter(h=>h.id!==id)   
-        await fs.promises.writeFile(this.path, JSON.stringify(products, null, 5))
-        return products
+        products = products.filter(h => h.id !== id);
+        await fs.promises.writeFile(this.path, JSON.stringify(products, null, 5));
+        return products;
     }
 }
 
-export default ProductsManager
+export default ProductsManager;
+
+
+
+// import fs from "fs"
+
+// class ProductsManager{
+//     static path
+//     static async getproducts(){
+//         try {
+//             if (fs.existsSync(this.path)) {
+//                 let products=JSON.parse(await fs.promises.readFile(this.path, {encoding:"utf-8"}))
+//                 return products
+//             } else {
+//                 return [];
+//             }
+//         } catch (error) {
+//             res.setHeader("Content-Type", "application/json");
+//             return res.status(500).json({
+//                 error: `Error inesperado en el servidor. Intente más tarde`,
+//                 detalle: `${error.message}`,
+//             });
+//         }
+//     }
+
+//     static async addproduct(product={}){
+//         let products
+//         try {
+//             products=await this.getproducts()
+//         } catch (error) {
+//             res.setHeader("Content-Type", "application/json");
+//             return res.status(500).json({
+//             error: `Error inesperado en el servidor. Intente más tarde`,
+//             detalle: `${error.message}`,
+//             })
+//         }
+
+//         let existe = products.find((v) => v.code.toLowerCase() === product.code.toLowerCase());
+//         if (existe) {
+//              throw new Error(`Error: ya existe el producto: ${product.code}`);
+//         }
+
+//         let id=1
+//         if(products.length>0){
+//             id=Math.max(...products.map(v=>v.id))+1
+//         }
+//         let nuevoProducto={
+//             id,
+//             ...product
+//         }
+//         nuevoProducto.status=true
+//         nuevoProducto.thumbnails=[]
+//         products.push(nuevoProducto)
+//         await fs.promises.writeFile(this.path, JSON.stringify(products, null, 5))
+//         return nuevoProducto
+//     }
+
+//     static async updateproduct(id, aModificar = {}) {
+//         let products;
+//         try {
+//             products = await this.getproducts();
+//         } catch (error) {
+//             throw new Error(`Error inesperado en el servidor durante update. Intente más tarde. Detalle: ${error.message}`);
+//         }
+//         id=Number(id)
+//         let indiceProducto = products.findIndex(h => h.id === id);
+//         if (indiceProducto === -1) {
+//             throw new Error(`Error: no existe el id: ${id}`);
+//         }
+    
+//         products[indiceProducto] = {
+//             ...products[indiceProducto],
+//             ...aModificar,
+//             id
+//         };
+
+//         await fs.promises.writeFile(this.path, JSON.stringify(products, null, 5));
+//         return products[indiceProducto];
+//     }
+
+//     static async deleteproduct(id){
+//         id=Number(id)
+//         let products 
+//         try {
+//             products = await this.getproducts()
+//         } catch (error) {
+//             res.setHeader("Content-Type", "application/json");
+//             return res.status(500).json({
+//                 error: `Error inesperado en el servidor. Intente más tarde`,
+//                 detalle: `${error.message}`,        
+//             })
+//         }
+//         let indiceproduct=products.findIndex(h=>h.id===id)
+//         if(indiceproduct===-1){
+//             throw new Error(`Error: no existe id ${id}`)
+//         }
+//         products=products.filter(h=>h.id!==id)   
+//         await fs.promises.writeFile(this.path, JSON.stringify(products, null, 5))
+//         return products
+//     }
+// }
+
+// export default ProductsManager

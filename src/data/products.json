@@ -6,11 +6,11 @@
           "code": "Estiba Reservada",
           "price": 250000,
           "status": true,
-          "description": "Elegido el momento de la cosecha se seleccionan lotes en cada viñedo, luego se seleccionan plantas en cada lote elegido, luego los racimos que, una vez descobajados, terminan fermentando en pequeños barriles de roble francés, donde permanecen estacionados por aproximadamente 24 meses. Finalmente se seleccionan aquellos barriles que serán embotellados.",
+          "description": "Notas: Elegido el momento de la cosecha se seleccionan lotes en cada viñedo, luego se seleccionan plantas en cada lote elegido, luego los racimos que, una vez descobajados, terminan fermentando en pequeños barriles de roble francés, donde permanecen estacionados por aproximadamente 24 meses. Finalmente se seleccionan aquellos barriles que serán embotellados.",
           "thumbnails": [
                "./data/imagenes/EstibaReservada.jpeg"
           ],
-          "stock": 50
+          "stock": 5
      },
      {
           "id": 2,
@@ -206,38 +206,5 @@
                "./data/imagenes/CruzatCuveeNature.jpeg"
           ],
           "stock": 100
-     },
-     {
-          "id": 18,
-          "code": "Numina Gran Corte",
-          "category": "Tintos",
-          "title": "Salentein",
-          "description": "Exquisito  vino",
-          "price": 25000,
-          "stock": 10,
-          "status": true,
-          "thumbnails": []
-     },
-     {
-          "id": 19,
-          "code": "Lagrima Canela Tinto",
-          "category": "Tintos",
-          "title": "Bressia",
-          "description": "Una alternativa recomendable",
-          "price": 20000,
-          "stock": 10,
-          "status": true,
-          "thumbnails": []
-     },
-     {
-          "id": 20,
-          "code": "Numina Malbec",
-          "category": "Tintos",
-          "title": "Salentein",
-          "description": "Una alternativa recomendable",
-          "price": 18000,
-          "stock": 1,
-          "status": true,
-          "thumbnails": []
      }
 ]

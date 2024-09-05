@@ -1,16 +1,25 @@
 import { Router } from 'express';
-import productsManager from '../dao/ProductsManager.js';
+import ProductsManager from '../dao/ProductsManager.js';
 
 const router = Router();
 
 router.get('/', async (req, res) => {
-    const products = await productsManager.getproducts();
-    res.render('home', { products });
+    try {
+        const products = await ProductsManager.getproducts();
+        res.render('home', { products });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 });
 
 router.get('/realtimeproducts', async (req, res) => {
-    const products = await productsManager.getproducts();
-    res.render('realTimeProducts', { products });
+    try {
+        const products = await ProductsManager.getproducts();
+        res.render('realTimeProducts', { products });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 });
 
 export { router };
+
