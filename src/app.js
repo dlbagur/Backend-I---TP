@@ -5,9 +5,11 @@ import productsRouter from './routes/products.router.js';
 import productsManager from "./dao/ProductsManager.js"
 import cartsRouter from './routes/carts.router.js';
 import { router as vistasRouter } from './routes/vistas.routers.js';
+import { config } from "./config/config,js";
+import { connDB } from './connDB.js';
 
+const PORT=config.PORT;
 const app = express();
-const PORT = 8080;
 
 const serverHTTP = app.listen(PORT, () => {
     console.log(`Server en línea en http://localhost:${PORT}`);
@@ -32,7 +34,19 @@ app.use('/', vistasRouter);
 
 io.on('connection', (socket) => {
     console.log('Nuevo cliente conectado');
+ 
+    // validación de existencia de producto
+    socket.on('validarProducto', async (code) => {
+        try {
+            const existe = await productsManager.getProductBy({ code });
+            socket.emit('productoExiste', !!existe);
+        } catch (error) {
+            console.error('Error al validar el producto:', error);
+            socket.emit('productoExiste', false);
+        }
+    });
     
+
     // Creación de un nuevo producto
     socket.on('crearProducto', async (producto) => {
         try {
@@ -47,9 +61,9 @@ io.on('connection', (socket) => {
     // Modificación de un producto
     socket.on('modificarProducto', async (producto) => {
         try {
-            const { id, ...dataToUpdate } = producto;
-            const aModificarProducto = await productsManager.updateproduct(id, dataToUpdate);            
-            io.emit('productoModificado', aModificarProducto);
+            const { _id, ...dataToUpdate } = producto;
+            const aModificarProducto = await productsManager.updateproduct(_id, dataToUpdate);
+            io.emit('productoModificado', producto);
         } catch (error) {
             console.log("Error ", error)
             socket.emit('error', 'Error al modificar producto');
@@ -66,5 +80,7 @@ io.on('connection', (socket) => {
         }
     });
 });
+
+connDB()
 
 export { io };

@@ -1,18 +1,17 @@
 import { Router } from "express";
 import productsManager from "../dao/ProductsManager.js"
 import { error } from "console"
+import { isValidObjectId } from "mongoose";
 import { io } from '../app.js';
 
 const router = Router();
-
-productsManager.path="src/data/products.json"
 
 const categoriasValidas = ["Tintos", "Blancos", "Rosados", "Espumantes"];    
 
 router.get("/", async (req, res) => {
   let products
   try {
-    products = await productsManager.getproducts();
+    return products = await productsManager.getproducts();
   } catch (error) {
     res.setHeader("Content-Type", "applcation/json");
     return res.status(500).json({
@@ -52,9 +51,20 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/:id", async (req, res) => {
-  let products
+  let { id } = req.params
+  if(!isValidObjectId(id)){
+    res.setHeader('Content-Type','application/json');
+    return res.status(400).json({error:`id con format inválido`})
+  }
   try {
-      products = await productsManager.getproducts();
+    let product = await productsManager.getProductById(id);
+    if(!product){
+        res.setHeader('Content-Type','application/json');
+        return res.status(400).json({error:`No existe un producto con id ${id}`})
+      } else {
+        return res.status(200).json({ product });
+      }
+    
   } catch (error) {
       res.setHeader("Content-Type", "applcation/json");
     return res.status(500).json({
@@ -62,103 +72,57 @@ router.get("/:id", async (req, res) => {
       detalle: `${error.mensaje}`,
     });
   }
-
-  let { id } = req.params;
-  const idaux = id;
-  id = Number(id);
-
-  if (isNaN(id)) {
-    const categoria = idaux.toLowerCase();
-    let resultado;
-
-    switch (categoria) {
-      case "tintos":
-        resultado = products.filter(
-          (product) => product.category.toLowerCase() === "tintos"
-        );
-        break;
-      case "blancos":
-        resultado = products.filter(
-          (product) => product.category.toLowerCase() === "blancos"
-        );
-        break;
-      case "rosados":
-        resultado = products.filter(
-          (product) => product.category.toLowerCase() === "rosados"
-        );
-        break;
-      case "espumantes":
-        resultado = products.filter(
-          (product) => product.category.toLowerCase() === "espumantes"
-        );
-        break;
-      default:
-        res.setHeader("Content-Type", "applcation/json");
-        return res.status(400).json({ error: `Categoría no encontrada` });
-    }
-    res.setHeader("Content-Type", "applcation/json");
-    return res.status(200).json({ resultado });
-  } else {
-    const product = products.find((v) => v.id === id);
-    res.setHeader("Content-Type", "applcation/json");
-    if (product) {
-      return res.status(200).json({ product });
-    } else {
-      return res.status(404).send(`Producto ${id} no encontrado`);
-    }
-  }
 });
 
 router.post("/", async (req, res) => {
-  const productNuevo = req.body
-  productNuevo.status = true
-  productNuevo.thumbnails = []
-  if (!productNuevo.title || !productNuevo.description || !productNuevo.code || !productNuevo.price || !productNuevo.stock || !productNuevo.category) {
+  let {code, category, title, description, price, stock, status, thumbnails, ...otros} = req.body
+  if (!title || !description || !code || !price || !stock || !category) {
     res.setHeader("Content-Type", "applcation/json");
     return res.status(400).json({ 
       error: 'Es obligatorio completar los campos title, description, code, price, stock y category' 
     });
   }
-  let precio = Number(productNuevo.price)
+  let precio = Number(price)
   if(isNaN(precio)) {
     {return res.status(400).json({ 
-        error: 'El campo precio debe ser numérico' 
+        error: 'El campo PRECIO debe ser numérico' 
       })
     }
     }else{
       if(precio<0) {
         {return res.status(400).json({ 
-            error: 'El campo precio debe ser mayor o igual a 0' 
+            error: 'El campo PRECIO debe ser mayor o igual a 0' 
           })
         }
       }
     }
-    productNuevo.price = precio
-    let disponible = Number(productNuevo.stock);
+    price = precio
+    let disponible = Number(stock);
     if(isNaN(disponible)) {
     {return res.status(400).json({ 
-        error: 'El campo stock debe ser numérico' 
+        error: 'El campo STOCK debe ser numérico' 
       })
     } 
     }else{
       if(disponible<0) {
         {return res.status(400).json({ 
-            error: 'El campo stock debe ser mayor o igual a 0' 
+            error: 'El campo STOCK debe ser mayor o igual a 0' 
           })
         }
       }
     }
-  productNuevo.stock = disponible 
-  if (!categoriasValidas.includes(productNuevo.category)) {
+  stock = disponible 
+  if (!categoriasValidas.includes(category)) {
     res.setHeader("Content-Type", "applcation/json");
     return res.status(400).json({ 
-      error: `Las categorias (category) válidas son: "Tintos", "Blancos", "Rosados" o "Espumantes"` 
+      error: `Las categorias válidas son: "Tintos", "Blancos", "Rosados" o "Espumantes"` 
     });
   }
-
-  let products
+  status = true
+  thumbnails = []
+  let existe
   try {
-      products = await productsManager.getproducts();
+    existe = await productsManager.getProductBy({code});
   } catch (error) {
       res.setHeader("Content-Type", "applcation/json");
     return res.status(500).json({
@@ -166,68 +130,52 @@ router.post("/", async (req, res) => {
       detalle: `${error.mensaje}`,
     });
   }
-
-  let existe = products.find((v) => v.code.toLowerCase() === productNuevo.code.toLowerCase());
-  if (existe) {
+  if (!existe) {
+    try {
+        let newProd= await productsManager.addproduct({code, category, title, description, price, stock, status, thumbnails, ...otros});
+        io.emit('agregarProducto', newProd);
+        res.setHeader("Content-Type", "applcation/json");
+        return res.status(200).json({ newProd });
+    } catch (error) {
+        res.setHeader("Content-Type", "applcation/json");
+        res.status(500).json({ error: `Error ${error.mensaje} al agregar producto ${productoNuevo}` });
+    }
+  } else {
     res.setHeader("Content-Type", "applcation/json");
     return res
       .status(400)
-      .json({ error: `Ya existe un producto de nombre ${productNuevo.code}` });
+      .json({ error: `Ya existe un producto de nombre ${code}`});
   }
-  let newProd
-  try {
-    newProd= await productsManager.addproduct(productNuevo);
-    io.emit('agregarProducto', newProd);
-    res.setHeader("Content-Type", "applcation/json");
-    return res.status(200).json({ newProd });
-  } catch (error) {
-    res.setHeader("Content-Type", "applcation/json");
-    res.status(500).json({ error: `Error ${error.mensaje} al agregar producto ${productNuevo}` });
-  }
-
 });
 
 router.put("/:id", async (req, res) => {
   let { id } = req.params;
-  id = Number(id);
-  if (isNaN(id)) {
-      res.setHeader("Content-Type", "application/json");
-    return res.status(400).json({ error: `id ${id} debe ser numérico` });
-  }
-  let products
+  let producto
   try {
-      products = await productsManager.getproducts();
-  } catch (error) {
+      producto = await productsManager.getProductById(id);
+    } catch (error) {
       res.setHeader("Content-Type", "application/json");
     return res.status(500).json({
       error: `Error inesperado en el servidor. Intente más tarde`,
       detalle: `${error.message}`,
     });
   }
-  let product = products.find((h) => h.id === id);
-  if (!product) {
+  if (!producto) {
     res.setHeader("Content-Type", "application/json");
     return res.status(400).json({ error: `No existe product con id: ${id}` });
   }
-
   let aModificar = req.body;
-  product = products.find((h) => h.id === id);
-  if (!product) {
-    res.setHeader("Content-Type", "application/json");
-    return res.status(400).json({ error: `No existe product con id: ${id}` });
-  }
-
   if (aModificar.price) {
     let precio = Number(aModificar.price);
     if(isNaN(precio)) {
       {return res.status(400).json({ 
-          error: 'El campo precio debe ser numérico' 
+          error: 'El campo PRECIO debe ser numérico' 
         })
       } 
       }else{
         if(precio<0) {
           {return res.status(400).json({ 
-              error: 'El campo precio debe ser mayor o igual a 0' 
+              error: 'El campo PRECIO debe ser mayor o igual a 0' 
             })
           }
         }
@@ -238,13 +186,13 @@ router.put("/:id", async (req, res) => {
     let disponible = Number(aModificar.stock);
     if(isNaN(disponible)) {
       {return res.status(400).json({ 
-          error: 'El campo stock debe ser numérico' 
+          error: 'El campo STOCK debe ser numérico' 
         })
-      } 
+      }
       }else{
         if(disponible<0) {
           {return res.status(400).json({ 
-              error: 'El campo stock debe ser mayor o igual a 0' 
+              error: 'El campo STOCK debe ser mayor o igual a 0' 
             })
           }
         }
@@ -255,16 +203,12 @@ router.put("/:id", async (req, res) => {
     if (!categoriasValidas.includes(aModificar.category)) {
         res.setHeader("Content-Type", "applcation/json");
         return res.status(400).json({ 
-          error: `Las categorias (category) válidas son: "Tintos", "Blancos", "Rosados" o "Espumantes"` 
+          error: `Las categorias válidas son: "Tintos", "Blancos", "Rosados" o "Espumantes"` 
         });
       }
     }
-
     if (aModificar.code) {
-      let existe = products.find(
-        (h) =>
-          h.code.toLowerCase() === aModificar.code.toLowerCase() && h.id !== id
-      );
+      let existe = productsManager.getProductByCode(aModificar.code)
       if (existe) {
         res.setHeader("Content-Type", "application/json");
         return res
@@ -287,35 +231,33 @@ router.put("/:id", async (req, res) => {
 });
 
 router.delete("/:id", async (req, res) => {
-  let { id } = req.params;
-  id = Number(id);
-  if (isNaN(id)) {
-      res.setHeader("Content-Type", "application/json");
-    return res.status(400).json({ error: `id ${id} debe ser numérico` });
+  let { idD }= req.params
+  if(!isValidObjectId(idD)){
+    res.setHeader('Content-Type','application/json');
+    return res.status(400).json({error:`id invalido`})
   }
-  let products
-  try {
-      products = await productsManager.getproducts();
-  } catch (error) {
-      res.setHeader("Content-Type", "application/json");
-    return res.status(500).json({
-      error: `Error inesperado en el servidor. Intente más tarde`,
-      detalle: `${error.message}`,
-    });
-  }
-  let product = products.find((h) => h.id === id);
-  if (!product) {
-    res.setHeader("Content-Type", "application/json");
-    return res.status(400).json({ error: `No existe product con id: ${id}` });
+  let productoExiste = await productsManager.getProductById(idD)
+  if(!productoExiste){
+      res.setHeader('Content-Type','application/json');
+      return res.status(400).json({error:`No existe el producto con id: ${idD}`})
   }
   try {
-    await productsManager.deleteproduct(id);
-    io.emit('eliminarProducto', id);
-    res.status(200).json({ mensaje: 'Producto eliminado' });
+      let productoEliminado=await productsManager.deleteproduct(idD)
+      if(!productoEliminado){
+          res.setHeader('Content-Type','application/json');
+          return res.status(400).json({error:`No se ha podido eliminar el producto`})
+      }
+      res.setHeader('Content-Type','application/json');
+      return res.status(200).json({productoEliminado});
   } catch (error) {
-      res.status(500).json({ error: 'Error al eliminar producto' });
+      console.log(error);
+      res.setHeader('Content-Type','application/json');
+      return res.status(500).json(
+          { error:`Error inesperado en el servidor - Intente más tarde, o contacte a su administrador`,
+            detalle:`${error.message}`
+          }
+      )
   }
-  
 });
 
 export default router;

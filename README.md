@@ -16,3 +16,8 @@ post localhost:8080/api/carts/x/vino/y
 
 Para Post pueden utilizar la siguiente info, o usarla de modelo:
 {"code":"Alamos Malbec", "category":"Tintos","title":"Catena Zapata", "description":"excelente vino tinto", "price":5000, "stock":10}
+
+
+Atlas MongoDB
+user: dlbagur
+pwd: CoderCoder

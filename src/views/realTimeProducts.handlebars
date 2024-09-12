@@ -8,62 +8,67 @@
 </head>
 <body>
     <h1>Productos en Tiempo Real</h1>
-        <ul id="product-list">
+    <ul id="product-list">
         {{#each products}}
-            <li class="card-io" data-id="{{this.id}}">
-            <span class="product-code-io">{{this.code}}</span>
-            <br> 
-            <span class="product-category-io">{{this.category}}</span> - 
-            <span class="product-title-io">{{this.title}}</span>
-            <br>
-            <span class="product-description-io">Notas: {{this.description}}</span>
-            <br> 
-            Precio: $<span class="product-price-io">{{this.price}}</span> - 
-            Stock: <span class="product-stock-io">{{this.stock}}</span>
-            <div class="card-menu">
-                <button class="edit-btn" data-id="{{this.id}}">Editar</button>
-                <button class="delete-btn" data-id="{{this.id}}">Eliminar</button>
-            </div>
+            <li class="card-io" data-id="{{this._id}}">
+                <span class="product-code-io">{{this.code}}</span>
+                <br> 
+                <span class="product-category-io">{{this.category}}</span> - 
+                <span class="product-title-io">{{this.title}}</span>
+                <br>
+                <span class="product-description-io">Notas: {{this.description}}</span>
+                <br> 
+                Precio: $<span class="product-price-io">{{this.price}}</span> - 
+                Stock: <span class="product-stock-io">{{this.stock}}</span>
+                <div class="dropdown">
+                    <button class="dropdown-btn">Opciones</button>
+                    <div class="dropdown-menu">
+                        <a href="#" class="edit-btn" data-id="{{this._id}}">Modificar</a>
+                        <a href="#" class="delete-btn" data-id="{{this._id}}">Eliminar</a>
+                        <a href="#" class="add-cart-btn" data-id="{{this._id}}">Agregar al Carrito</a>
+                    </div>
+                </div>
             </li>
         {{/each}}
-        </ul>
+    </ul>
 
-        <!-- Botón para modificar un producto-->
-        <div id="productModal" class="modal">
-            <div class="modal-content">
-                <span class="close">&times;</span>
-                <h2>Modificar Producto</h2>
-                <form id="form-modificar-producto">
-                    <input type="text" id="edit-product-code" placeholder="Código del producto" required>
-                    <input type="text" id="edit-product-category" placeholder="Categoría" required>
-                    <input type="text" id="edit-product-title" placeholder="Título del producto" required>
-                    <input type="text" id="edit-product-description" placeholder="Descripción" required>
-                    <input type="number" id="edit-product-price" placeholder="Precio" required>
-                    <input type="number" id="edit-product-stock" placeholder="Stock" required>
-                    <button type="submit">Modificar Producto</button>
-                </form>
-            </div>
+    <!-- Modal para modificar un producto -->
+    <div id="productModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Modificar Producto</h2>
+            <form id="form-modificar-producto">
+                <input type="text" id="edit-product-code" placeholder="Nombre del vino" required>
+                <input type="text" id="edit-product-category" placeholder="Categoría" required>
+                <input type="text" id="edit-product-title" placeholder="Bodega productora" required>
+                <input type="text" id="edit-product-description" placeholder="Descripción" required>
+                <input type="number" id="edit-product-price" placeholder="Precio" required>
+                <input type="number" id="edit-product-stock" placeholder="Stock" required>
+                <br>
+                <button type="submit">Modificar Producto</button>
+            </form>
         </div>
+    </div>
 
-        <!-- Botón para agregar producto -->
-        <button id="openAddProductModal" class="add-btn">Agregar Producto</button>
+    <!-- Botón para agregar producto -->
+    <button id="openAddProductModal" class="add-btn">Agregar Producto</button>
 
-        <!-- Modal para agregar producto -->
-        <div id="addProductModal" class="modal">
+    <!-- Modal para agregar producto -->
+    <div id="addProductModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
             <h2>Agregar Nuevo Producto</h2>
             <form id="form-agrego-producto">
-                <input type="text" id="product-code" placeholder="Marca del producto" required>
+                <input type="text" id="product-code" placeholder="Nombre del vino" required>
                 <input type="text" id="product-category" placeholder="Categoría" required>
-                <input type="text" id="product-title" placeholder="Bodega del producto" required>
+                <input type="text" id="product-title" placeholder="Bodega productora" required>
                 <input type="text" id="product-description" placeholder="Descripción" required>
                 <input type="number" id="product-price" placeholder="Precio" required>
                 <input type="number" id="product-stock" placeholder="Stock" required>
                 <button type="submit">Agregar Producto</button>
             </form>
         </div>
-        </div>
+    </div>
 
     <script src="/socket.io/socket.io.js"></script>
     <script src="/scripts/realTimeProducts.js"></script>

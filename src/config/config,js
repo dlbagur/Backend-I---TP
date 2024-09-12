@@ -1,0 +1,6 @@
+
+export const config={
+    PORT:8080,
+    MONGO_URL: "mongodb+srv://dlbagur:CoderCoder@cluster0.d9wnvab.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
+    DB_NAME: "dbBackend1",
+}
