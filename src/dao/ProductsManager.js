@@ -17,7 +17,7 @@ class ProductsManager {
         return await productosModelo.find({code:nombre})
     }
 
-    static async getProductByQry(skip, limit={}){
+    static async getProductByQry(skip, limit, order = {}){
         return await productosModelo.find()
                 .skip(skip)
                 .limit(limit)        

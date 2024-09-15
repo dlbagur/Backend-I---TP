@@ -4,6 +4,7 @@ import { Server } from 'socket.io';
 import productsRouter from './routes/products.router.js';
 import productsManager from "./dao/ProductsManager.js"
 import cartsRouter from './routes/carts.router.js';
+import CartsManager from './dao/CartsManager.js';
 import { router as vistasRouter } from './routes/vistas.routers.js';
 import { config } from "./config/config,js";
 import { connDB } from './connDB.js';
@@ -79,9 +80,8 @@ io.on('connection', (socket) => {
         }
     });
 
-// Eliminación de un carrito
+    // Eliminación de un carrito
     socket.on('eliminarCarrito', async (idCarrito) => {
-    console.log(`Solicitud de eliminación recibida para el carrito con ID: ${idCarrito}`); 
     try {
         await CartsManager.deleteCart(idCarrito);
         io.emit('eliminarCarrito', idCarrito);

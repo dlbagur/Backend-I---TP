@@ -37,7 +37,6 @@ class CartsManager {
     static async addProductToCart(cartId, prodId) {
         let cart;
         try {
-            console.log("Buscando carrito con ID:", cartId);
             cart = await cartsModelo.findById(cartId);
             if (!cart) {
                 throw new Error(`No existe un carrito con el ID ${cartId}`);
@@ -48,7 +47,6 @@ class CartsManager {
 
         let productoExistente;
         try {
-            console.log("Buscando producto con ID:", prodId);
             productoExistente = await productosModelo.findById(prodId);
             if (!productoExistente) {
                 throw new Error(`No existe producto con el ID ${prodId}`);
@@ -58,7 +56,6 @@ class CartsManager {
         }
 
         const productoIndex = cart.productos.findIndex(p => p.producto.toString() === prodId);
-        console.log("Producto encontrado en el carrito:", productoIndex !== -1);
 
         if (productoIndex === -1) {
             if (productoExistente.stock < 1) {
@@ -75,8 +72,6 @@ class CartsManager {
         }
 
         await cart.save();
-        console.log("Carrito actualizado guardado:", cart);
-
         return cart.productos;
     }
 
@@ -87,14 +82,11 @@ class CartsManager {
                 throw new Error(`No existe un carrito con el ID ${idCarrito}`);
             }
             const resultado = await cartsModelo.findByIdAndDelete(idCarrito);
-            console.log("Carrito eliminado:", resultado);
             return resultado;
         } catch (error) {
             throw new Error(`Error eliminando el carrito: ${error.message}`);
         }
     }
-
-
 
     static async deleteProductFromCart(cartId, productId) {
         let cart = await cartsModelo.findById(cartId);

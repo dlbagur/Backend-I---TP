@@ -42,7 +42,7 @@ router.post('/', async (req, res) => {
     }
   });
   
-  router.post('/:cid/products/:pid', async (req, res) => {
+router.post('/:cid/products/:pid', async (req, res) => {
     const { cid, pid } = req.params;
     if (!isValidObjectId(cid)) {
         return res.status(400).json({ error: `ID de CART con formato inválido` });
@@ -65,7 +65,6 @@ router.post('/', async (req, res) => {
         // return res.status(500).json({ error: 'Error agregando producto al carrito' });
     }
 });
-
 
 router.delete('/:cid/', async (req, res) => {
     let { cid } = req.params;

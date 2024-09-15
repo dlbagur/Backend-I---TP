@@ -24,7 +24,7 @@ router.get('/realtimeproducts', async (req, res) => {
 
 router.get('/realtimecarts', async (req, res) => {
     try {
-        const products = await CartsManager.getCarts();
+        const carts = await CartsManager.getCarts();
         res.render('realTimeCarts', { carts });
     } catch (error) {
         res.status(500).json({ error: error.message });

@@ -9,7 +9,7 @@ const router = Router();
 const categoriasValidas = ["Tintos", "Blancos", "Rosados", "Espumantes"];    
 
 router.get("/", async (req, res) => {
-  let { limit, skip } = req.query;
+  let { limit, skip, sort } = req.query;
   if (limit) {
     limit = Number(limit);
     if (isNaN(limit)) {
@@ -34,10 +34,22 @@ router.get("/", async (req, res) => {
       skip = 0;
   }
 
-  let products;
+  if (!sort=="asc" && !sort== "desc") {
+    res.setHeader("Content-Type", "applcation/json");
+    return res
+    .status(400)
+    .json({ error: `El argumento SORT debe ser "asc o "desc"` });
+  }
+
+  // const campo = "Price";
+  const sortOrder = "asc";
+  const order = (sortOrder ==="desc") ? -1 : 1;
+  // let query =
+
+
+  let products
   try {
-    // Ajuste: usar el nombre correcto del método
-    products = await productsManager.getProductByQry(skip, limit); 
+    products = await productsManager.getProductByQry(skip, limit, order); 
     res.setHeader("Content-Type", "application/json");
     return res.status(200).json({ products });
   } catch (error) {
