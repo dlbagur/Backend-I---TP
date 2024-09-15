@@ -9,46 +9,42 @@ const router = Router();
 const categoriasValidas = ["Tintos", "Blancos", "Rosados", "Espumantes"];    
 
 router.get("/", async (req, res) => {
+  let { limit, skip, sort, page } = req.query;
 
-  let { limit, skip, sort, page} = req.query;
-  if(!page || isNaN(Number(page))){
-    page=1
+  // Valores por defecto
+  page = page ? Number(page) : 1;
+  limit = limit ? Number(limit) : 10;
+  skip = skip ? Number(skip) : 0;
+
+  let sortOptions = {};
+  if (sort && (sort === 'asc' || sort === 'desc')) {
+    sortOptions = { price: sort };
   }
 
-  if (!limit || isNaN(limit)) {
-    limit = 10;
-  }
-
-  if (!skip || isNaN(skip)) {
-      skip = 0
-  }
-
-  if (!sort=="asc" && !sort== "desc") {
-    res.setHeader("Content-Type", "applcation/json");
-    return res
-    .status(400)
-    .json({ error: `El argumento SORT debe ser "asc o "desc"` });
-  }
-
-  // const campo = "Price";
-  const sortOrder = "asc";
-  const order = (sortOrder ==="desc") ? -1 : 1;
-  // let query =
-
-
-  let products
   try {
-    products = await productsManager.getproductsPaginate(skip, limit, page, order); 
-    res.setHeader("Content-Type", "application/json");
-    return res.status(200).json({ products });
-  } catch (error) {
-    res.setHeader("Content-Type", "applcation/json");
-    return res.status(500).json({
+    const products = await productsManager.getproductsPaginate(skip, limit, page, sortOptions);
+    // res.setHeader("Content-Type", "application/json");
+    // return res.status(200).json({ products });
+      res.render("realTimeProducts", {
+        products: products.docs,
+        page: products.page,
+        totalPages: products.totalPages,
+        hasNextPage: products.hasNextPage,
+        hasPrevPage: products.hasPrevPage,
+        nextPage: products.nextPage,
+        prevPage: products.prevPage,
+        limit: limit,
+        sort: sort
+      })
+      } catch (error) {
+      res.setHeader("Content-Type", "application/json");
+      return res.status(500).json({
       error: `Error inesperado en el servidor. Intente más tarde`,
       detalle: `${error.message}`,
     });
   }
 });
+
 
 router.get("/:id", async (req, res) => {
   let { id } = req.params

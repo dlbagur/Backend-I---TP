@@ -5,9 +5,17 @@ class ProductsManager {
     static async getproducts() {
         return await productosModelo.find().lean()
     }    
-    static async getproductsPaginate(skip, limit, page, order) {
-        return await productosModelo.paginate({},{page, lean:true, limit})
-    }    
+
+    static async getproductsPaginate(skip, limit, page, sortOptions = {}) {
+        const options = {
+            page: page || 1,
+            limit: limit || 10,
+            sort: sortOptions,
+            lean: true
+        };
+        return await productosModelo.paginate({}, options);
+    }
+    
 
     static async getProductById(filtro={}){
         return await productosModelo.findById(filtro).lean()

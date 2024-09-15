@@ -101,6 +101,7 @@ h1 {
 }
 
 .add-btn {
+  margin-bottom: 20px;
   left: 10px;
   border: 1px solid #350202;
   background-color:#f3ed9f;
@@ -150,7 +151,7 @@ h1 {
 }
 
 .dropdown:hover .dropdown-menu {
-  display: block; /* Muestra el menú al hacer hover */
+  display: block;
 }
 
 /* Estilos para modales */
