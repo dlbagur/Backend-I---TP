@@ -46,7 +46,6 @@ io.on('connection', (socket) => {
         }
     });
     
-
     // Creación de un nuevo producto
     socket.on('crearProducto', async (producto) => {
         try {
@@ -79,6 +78,19 @@ io.on('connection', (socket) => {
             socket.emit('error', 'Error al eliminar producto');
         }
     });
+
+// Eliminación de un carrito
+    socket.on('eliminarCarrito', async (idCarrito) => {
+    console.log(`Solicitud de eliminación recibida para el carrito con ID: ${idCarrito}`); 
+    try {
+        await CartsManager.deleteCart(idCarrito);
+        io.emit('eliminarCarrito', idCarrito);
+    } catch (error) {
+        socket.emit('error', 'Error al eliminar carrito');
+    }
+});
+
+
 });
 
 connDB()

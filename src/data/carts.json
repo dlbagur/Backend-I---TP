@@ -1,32 +1,15 @@
 [
-  {
-    "id": 1,
-    "products": [
-      {
-        "products": 2,
-        "quantity": 1
-      },
-      {
-        "products": 5,
-        "quantity": 7
-      },
-      {
-        "products": 10,
-        "quantity": 1
-      }
-    ]
-  },
-  {
-    "id": 2,
-    "products": [
-      {
-        "products": 10,
-        "quantity": 1
-      },
-      {
-        "products": 15,
-        "quantity": 2
-      }
-    ]
-  }
+  { 
+       "usuario": "Diego",
+       "productos": [
+           {
+               "producto": "66dfa0edfdcce1b0bb143482",
+               "cantidad": 1
+           },
+           {
+               "producto": "66dfa0edfdcce1b0bb143483",
+               "cantidad": 1
+           }
+       ]
+   }   
 ]

@@ -1,107 +1,111 @@
-import fs from 'fs';
-import productsManager from './ProductsManager.js'; 
-
-const cartsFilePath = 'src/data/carts.json';
+import mongoose from 'mongoose';
+import { cartsModelo } from './models/cartsModel.js';
+import { productosModelo } from './models/productsModel.js';
 
 class CartsManager {
-    static path = cartsFilePath;
 
-    static async getCart() {
-        try {
-            if (fs.existsSync(this.path)) {
-                let carts = JSON.parse(await fs.promises.readFile(this.path, { encoding: "utf-8" }));
-                return carts;
-            } else {
-                return [];
-            }
-        } catch (error) {
-            throw new Error(`Error inesperado en el servidor: ${error.message}`);
-        }
+    static async getCarts() {
+        return await cartsModelo.find()
+            .populate('productos.producto')
+            .lean();
+    }
+    
+    static async getCartById(cartId) {
+        return await cartsModelo.findById(cartId)
+            .populate('productos.producto')
+            .lean();
     }
 
-    static async addCart() {
-        try {
-            const carts = await this.getCart();
-            let id = 1;
-            if (carts.length > 0) {
-                id = Math.max(...carts.map(v => v.id)) + 1;
-            }
-            let nuevoCarrito = {
-                id,
-                products: []
-            };
-            carts.push(nuevoCarrito);
-            await fs.promises.writeFile(this.path, JSON.stringify(carts, null, 2));
-            return nuevoCarrito;
-        } catch (error) {
-            throw new Error(`Error inesperado en el servidor: ${error.message}`);
-        }
+    static async addCart(cart = {}) {
+        let nuevoCart = await cartsModelo.create(cart);
+        return nuevoCart; 
     }
 
     static async getCartProducts(cartId) {
-        let carts;
+        let cart
         try {
-            carts = await this.getCart();
-        } catch (error) {
+            cart = await this.getCart(cartId);
+            if (!cart) {
+                throw new Error(`No existe un carrito con el id ${cartId}`);
+            }
+            } catch (error) {
             throw new Error(`Error recuperando el carrito: ${error.message}`);
-        }
-        
-        let idC = Number(cartId);
-        const cart = carts.find(c => c.id === idC);
-        if (!cart) {
-            throw new Error(`No existe un carrito con el id ${cartId}`);
         }
         return cart.products;
     }
 
     static async addProductToCart(cartId, prodId) {
-        let carts;
+        let cart;
         try {
-            carts = await this.getCart();
+            console.log("Buscando carrito con ID:", cartId);
+            cart = await cartsModelo.findById(cartId);
+            if (!cart) {
+                throw new Error(`No existe un carrito con el ID ${cartId}`);
+            }
         } catch (error) {
-            throw new Error(`Error inesperado en el servidor: ${error.message}`);
+            throw new Error(`Error al recuperar el carrito: ${error.message}`);
         }
 
-        let idC = Number(cartId);
-        let idP = Number(prodId);
-        const cartIndex = carts.findIndex(c => c.id === idC);
-        if (cartIndex === -1) {
-            throw new Error(`No existe un carrito con el id ${cartId}`);
-        }
-        const cart = carts[cartIndex];
-
-        let products;
+        let productoExistente;
         try {
-            products = await productsManager.getproducts();
+            console.log("Buscando producto con ID:", prodId);
+            productoExistente = await productosModelo.findById(prodId);
+            if (!productoExistente) {
+                throw new Error(`No existe producto con el ID ${prodId}`);
+            }
         } catch (error) {
-            throw new Error(`Error recuperando productos: ${error.message}`);
+            throw new Error(`Error al recuperar el producto: ${error.message}`);
         }
 
-        const productoExistente = products.find(p => p.id === idP);
-        if (!productoExistente) {
-            throw new Error(`No existe producto con id ${prodId}`);
-        }
+        const productoIndex = cart.productos.findIndex(p => p.producto.toString() === prodId);
+        console.log("Producto encontrado en el carrito:", productoIndex !== -1);
 
-        const productoIndex = cart.products.findIndex(p => p.products === idP);
         if (productoIndex === -1) {
             if (productoExistente.stock < 1) {
-                throw new Error(`No hay stock suficiente del producto con id ${prodId}`);
+                throw new Error(`No hay stock suficiente del producto con ID ${prodId}`);
             } else {
-                cart.products.push({ products: idP, quantity: 1 });
+                cart.productos.push({ producto: new mongoose.Types.ObjectId(prodId), quantity: 1 });
             }
         } else {
-            if (productoExistente.stock - cart.products[productoIndex].quantity < 1) {
-                throw new Error(`No hay stock suficiente del producto con id ${prodId}`);
+            if (productoExistente.stock - cart.productos[productoIndex].quantity < 1) {
+                throw new Error(`No hay stock suficiente del producto con ID ${prodId}`);
             } else {
-                cart.products[productoIndex].quantity += 1;
+                cart.productos[productoIndex].quantity += 1;
             }
         }
 
-        carts[cartIndex] = cart;
-        await fs.promises.writeFile(this.path, JSON.stringify(carts, null, 2));
+        await cart.save();
+        console.log("Carrito actualizado guardado:", cart);
 
-        return cart.products;
+        return cart.productos;
     }
+
+    static async deleteCart(idCarrito) {
+        try {
+            const cart = await cartsModelo.findById(idCarrito);
+            if (!cart) {
+                throw new Error(`No existe un carrito con el ID ${idCarrito}`);
+            }
+            const resultado = await cartsModelo.findByIdAndDelete(idCarrito);
+            console.log("Carrito eliminado:", resultado);
+            return resultado;
+        } catch (error) {
+            throw new Error(`Error eliminando el carrito: ${error.message}`);
+        }
+    }
+
+
+
+    static async deleteProductFromCart(cartId, productId) {
+        let cart = await cartsModelo.findById(cartId);
+        if (!cart) {
+            throw new Error(`No existe un carrito con el ID ${cartId}`);
+        }
+        cart.productos = cart.productos.filter(p => p.producto.toString() !== productId);
+        await cart.save();
+        return cart;
+    }
+
 }
 
 export default CartsManager;

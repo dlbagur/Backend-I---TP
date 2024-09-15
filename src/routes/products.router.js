@@ -9,17 +9,6 @@ const router = Router();
 const categoriasValidas = ["Tintos", "Blancos", "Rosados", "Espumantes"];    
 
 router.get("/", async (req, res) => {
-  let products
-  try {
-    return products = await productsManager.getproducts();
-  } catch (error) {
-    res.setHeader("Content-Type", "applcation/json");
-    return res.status(500).json({
-      error: `Error inesperado en el servidor. Intente mas tarde`,
-      detalle: `${error.mensaje}`,
-    });
-  }
-
   let { limit, skip } = req.query;
   if (limit) {
     limit = Number(limit);
@@ -30,7 +19,7 @@ router.get("/", async (req, res) => {
       .json({ error: `El argumento limit tiene que ser numérico` });
     }
   } else {
-      limit = products.length;
+      limit = 10;
   }
 
   if (skip) {
@@ -45,9 +34,19 @@ router.get("/", async (req, res) => {
       skip = 0;
   }
 
-  let resultado = products.slice(skip, skip + limit);
-  res.setHeader("Content-Type", "applcation/json");
-  return res.status(200).json({ resultado });
+  let products;
+  try {
+    // Ajuste: usar el nombre correcto del método
+    products = await productsManager.getProductByQry(skip, limit); 
+    res.setHeader("Content-Type", "application/json");
+    return res.status(200).json({ products });
+  } catch (error) {
+    res.setHeader("Content-Type", "applcation/json");
+    return res.status(500).json({
+      error: `Error inesperado en el servidor. Intente más tarde`,
+      detalle: `${error.message}`,
+    });
+  }
 });
 
 router.get("/:id", async (req, res) => {
@@ -231,18 +230,18 @@ router.put("/:id", async (req, res) => {
 });
 
 router.delete("/:id", async (req, res) => {
-  let { idD }= req.params
-  if(!isValidObjectId(idD)){
+  let {id}= req.params
+  if(!isValidObjectId(id)){
     res.setHeader('Content-Type','application/json');
-    return res.status(400).json({error:`id invalido`})
+    return res.status(400).json({error:`id invalido ${id}`})
   }
-  let productoExiste = await productsManager.getProductById(idD)
+  let productoExiste = await productsManager.getProductById(id)
   if(!productoExiste){
       res.setHeader('Content-Type','application/json');
-      return res.status(400).json({error:`No existe el producto con id: ${idD}`})
+      return res.status(400).json({error:`No existe el producto con id: ${id}`})
   }
   try {
-      let productoEliminado=await productsManager.deleteproduct(idD)
+      let productoEliminado=await productsManager.deleteproduct(id)
       if(!productoEliminado){
           res.setHeader('Content-Type','application/json');
           return res.status(400).json({error:`No se ha podido eliminar el producto`})
