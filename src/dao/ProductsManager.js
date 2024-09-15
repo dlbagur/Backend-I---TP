@@ -5,6 +5,9 @@ class ProductsManager {
     static async getproducts() {
         return await productosModelo.find().lean()
     }    
+    static async getproductsPaginate(skip, limit, page, order) {
+        return await productosModelo.paginate({},{page, lean:true, limit})
+    }    
 
     static async getProductById(filtro={}){
         return await productosModelo.findById(filtro).lean()

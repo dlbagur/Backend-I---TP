@@ -9,29 +9,18 @@ const router = Router();
 const categoriasValidas = ["Tintos", "Blancos", "Rosados", "Espumantes"];    
 
 router.get("/", async (req, res) => {
-  let { limit, skip, sort } = req.query;
-  if (limit) {
-    limit = Number(limit);
-    if (isNaN(limit)) {
-      res.setHeader("Content-Type", "applcation/json");
-      return res
-      .status(400)
-      .json({ error: `El argumento limit tiene que ser numérico` });
-    }
-  } else {
-      limit = 10;
+
+  let { limit, skip, sort, page} = req.query;
+  if(!page || isNaN(Number(page))){
+    page=1
   }
 
-  if (skip) {
-    skip = Number(skip);
-    if (isNaN(skip)) {
-      res.setHeader("Content-Type", "applcation/json");
-      return res
-        .status(400)
-        .json({ error: `El argumento skip tiene que ser numérico` });
-    }
-  } else {
-      skip = 0;
+  if (!limit || isNaN(limit)) {
+    limit = 10;
+  }
+
+  if (!skip || isNaN(skip)) {
+      skip = 0
   }
 
   if (!sort=="asc" && !sort== "desc") {
@@ -49,7 +38,7 @@ router.get("/", async (req, res) => {
 
   let products
   try {
-    products = await productsManager.getProductByQry(skip, limit, order); 
+    products = await productsManager.getproductsPaginate(skip, limit, page, order); 
     res.setHeader("Content-Type", "application/json");
     return res.status(200).json({ products });
   } catch (error) {
