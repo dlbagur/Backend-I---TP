@@ -6,16 +6,23 @@ class ProductsManager {
         return await productosModelo.find().lean()
     }    
 
-    static async getproductsPaginate(skip, limit, page, sortOptions = {}) {
+    static async getproductsPaginate(skip, limit, page, sortOptions = {}, filters = {}) {
+        const query = {}
+        if (filters.category) {
+            query.category = filters.category
+        }
+        if (filters.inStock) {
+            query.stock = { $gt:0}
+        }
+
         const options = {
             page: page || 1,
             limit: limit || 10,
             sort: sortOptions,
             lean: true
         };
-        return await productosModelo.paginate({}, options);
+        return await productosModelo.paginate(query, options);
     }
-    
 
     static async getProductById(filtro={}){
         return await productosModelo.findById(filtro).lean()

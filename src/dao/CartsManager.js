@@ -93,11 +93,17 @@ class CartsManager {
         if (!cart) {
             throw new Error(`No existe un carrito con el ID ${cartId}`);
         }
+    
+        const productoEnCarrito = cart.productos.find(p => p.producto.toString() === productId);
+        if (!productoEnCarrito) {
+            throw new Error(`El producto con el ID ${productId} no existe en el carrito`);
+        }
+    
         cart.productos = cart.productos.filter(p => p.producto.toString() !== productId);
         await cart.save();
         return cart;
     }
-
+    
 }
 
 export default CartsManager;

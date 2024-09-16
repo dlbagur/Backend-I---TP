@@ -35,8 +35,7 @@ app.use('/', vistasRouter);
 
 io.on('connection', (socket) => {
     console.log('Nuevo cliente conectado');
- 
-    // validación de existencia de producto
+
     socket.on('validarProducto', async (code) => {
         try {
             const existe = await productsManager.getProductBy({ code });
@@ -46,8 +45,7 @@ io.on('connection', (socket) => {
             socket.emit('productoExiste', false);
         }
     });
-    
-    // Creación de un nuevo producto
+
     socket.on('crearProducto', async (producto) => {
         try {
             const nuevoProducto = await productsManager.addproduct(producto);            
@@ -58,7 +56,6 @@ io.on('connection', (socket) => {
         }
     });
 
-    // Modificación de un producto
     socket.on('modificarProducto', async (producto) => {
         try {
             const { _id, ...dataToUpdate } = producto;
@@ -70,9 +67,9 @@ io.on('connection', (socket) => {
         }
     });
 
-    // Eliminación de un producto
     socket.on('eliminarProducto', async (idProducto) => {
         try {
+            console.log("Eliminar producto an APP:", idProducto);            
             await productsManager.deleteproduct(idProducto);
             io.emit('eliminarProducto', idProducto);
         } catch (error) {
@@ -80,17 +77,24 @@ io.on('connection', (socket) => {
         }
     });
 
-    // Eliminación de un carrito
     socket.on('eliminarCarrito', async (idCarrito) => {
-    try {
-        await CartsManager.deleteCart(idCarrito);
-        io.emit('eliminarCarrito', idCarrito);
-    } catch (error) {
-        socket.emit('error', 'Error al eliminar carrito');
-    }
-});
+        try {
+            await CartsManager.deleteCart(idCarrito);
+            io.emit('eliminarCarrito', idCarrito);
+        } catch (error) {
+            socket.emit('error', 'Error al eliminar carrito');
+        }
+    });
 
-
+    socket.on('agregarProductToCart', async ({ cart, idProducto }) => {  // Desestructuramos el objeto
+        try {
+            await CartsManager.addProductToCart(cart, idProducto);
+            io.emit('CarritoActualizado', cart);
+        } catch (error) {
+            socket.emit('error', 'Error al agregar Producto al Carrito');
+        }
+    });
+    
 });
 
 connDB()

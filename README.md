@@ -1,21 +1,22 @@
-Los datos ingresados corresponden a una Vinería, se clasifican por tipo de vino ("tintos", "blancos", "rosados" y "espumantes), 4 productos por categoría, numerados (id) del 1 al 16.
+Los datos ingresados corresponden a una Vinería, se clasifican por tipo de vino ("tintos", "blancos", "rosados" y "espumantes)
 
 Se puede utilizar:
+    localhost:8080/
+    localhost:8080/realtimeproducts
     localhost:8080/api/products
-    localhost:8080/api/products?limit=5
-    localhost:8080/api/products?skip=10
-    localhost:8080/api/products?limit=3&skip=10
-    localhost:8080/api/products/tintos
-    localhost:8080/api/products/blancos
-    localhost:8080/api/products/rosados
-    localhost:8080/api/products/espumantes
+    localhost:8080/api/products/?page=2&limit=10&sort=desc
 
-post localhost:8080/api/carts
-get  localhost:8080/api/carts/n
-post localhost:8080/api/carts/x/vino/y
+    localhost:8080/api/products?category=Tintos
+    localhost:8080/api/products?category=Blancos
+    localhost:8080/api/products?category=Rosados
+    localhost:8080/api/products?category=Espumantes
+    localhost:8080/api/products?category=Tintos&inStock=true
 
 Para Post pueden utilizar la siguiente info, o usarla de modelo:
-{"code":"Alamos Malbec", "category":"Tintos","title":"Catena Zapata", "description":"excelente vino tinto", "price":5000, "stock":10}
+
+{"code":"Alamos Malbec", "category":"Tintos","title":"Catena Zapata", "description":"excelente vino tinto", "price":9000, "stock":10}
+
+{"code":"Alamos Rosado", "category":"Rosados","title":"Catena Zapata", "description":"excelente vino rosado, muy fresco", "price":8500, "stock":10}
 
 
 Atlas MongoDB

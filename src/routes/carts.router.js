@@ -56,13 +56,6 @@ router.post('/:cid/products/:pid', async (req, res) => {
     } catch (error) {
         console.error('Error al agregar producto al carrito:', error); // Log detallado en el servidor
         return res.status(500).json({ error: `Error agregando producto al carrito: ${error.message}` });
-        // if (error.message.includes('Carrito con ID')) {
-        //     return res.status(404).json({ error: error.message });
-        // }
-        // if (error.message.includes('Producto con ID')) {
-        //     return res.status(404).json({ error: error.message });
-        // }
-        // return res.status(500).json({ error: 'Error agregando producto al carrito' });
     }
 });
 
@@ -101,7 +94,7 @@ router.delete('/:cid/products/:pid', async (req, res) => {
         let updatedCart = await CartsManager.deleteProductFromCart(cid, pid);
         return res.status(200).json({ message: `Producto eliminado del carrito`, cart: updatedCart });
     } catch (error) {
-        res.status(500).json({ error: `Error inesperado en el servidor: ${error.message}` });
+        res.status(500).json({ error: `Error: ${error.message}` });
     }
 });
 
