@@ -79,7 +79,8 @@ io.on('connection', (socket) => {
 
     socket.on('eliminarCarrito', async (idCarrito) => {
         try {
-            await CartsManager.deleteCart(idCarrito);
+            // await CartsManager.deleteCart(idCarrito);
+            await CartsManager.deleteAllProductsFromCart(idCarrito);
             io.emit('eliminarCarrito', idCarrito);
         } catch (error) {
             socket.emit('error', 'Error al eliminar carrito');

@@ -14,7 +14,7 @@ Se puede utilizar:
 
 El carrito hardcodeado es el : "66e62eb3a973a75814533678"
 Productos hay:
-"66dfa0edfdcce1b0bb143483"
+"66dfa0edfdcce1b0bb143483" --> Sin stock
 "66dfa0edfdcce1b0bb143486"
 "66dfa0edfdcce1b0bb143488"
 

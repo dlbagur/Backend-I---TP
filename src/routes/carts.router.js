@@ -59,6 +59,23 @@ router.post('/:cid/products/:pid', async (req, res) => {
     }
 });
 
+// router.delete('/:cid/', async (req, res) => {
+//     let { cid } = req.params;
+//     if (!isValidObjectId(cid)) {
+//         return res.status(400).json({ error: `ID con formato inválido` });
+//     }
+//     try {
+//         let cart = await CartsManager.getCartById(cid);
+//         if (!cart) {
+//             return res.status(400).json({ error: `No existe el carrito con ID ${cid}` });
+//         }
+//         let cartEliminado = await CartsManager.deleteCart(cid);
+//         return res.status(200).json({ message: `Carrito eliminado`, cart: cartEliminado });
+//     } catch (error) {
+//         res.status(500).json({ error: `Error inesperado en el servidor: ${error.message}` });
+//     }
+// });
+
 router.delete('/:cid/', async (req, res) => {
     let { cid } = req.params;
     if (!isValidObjectId(cid)) {
@@ -69,8 +86,8 @@ router.delete('/:cid/', async (req, res) => {
         if (!cart) {
             return res.status(400).json({ error: `No existe el carrito con ID ${cid}` });
         }
-        let cartEliminado = await CartsManager.deleteCart(cid);
-        return res.status(200).json({ message: `Carrito eliminado`, cart: cartEliminado });
+        let cartEliminado = await CartsManager.deleteAllProductsFromCart(cid);
+        return res.status(200).json({ message: `Carrito vaciado`, cart: cartEliminado });
     } catch (error) {
         res.status(500).json({ error: `Error inesperado en el servidor: ${error.message}` });
     }
