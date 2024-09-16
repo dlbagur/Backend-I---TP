@@ -160,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <span class="product-category-io">${producto.category}</span> - 
             <span class="product-title-io">${producto.title}</span>
             <br>
-            <span class="product-description-io">Notas: ${producto.description}</span>
+            Notas: <span class="product-description-io">${producto.description}</span>
             <br> 
             Precio: $<span class="product-price-io">${producto.price}</span> - 
             Stock: <span class="product-stock-io">${producto.stock}</span>

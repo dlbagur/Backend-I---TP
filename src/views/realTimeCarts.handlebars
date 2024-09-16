@@ -17,7 +17,8 @@
                 <ul>
                     {{#each this.productos}}
                         <li>
-                            <span>Producto: {{this.producto.title}}</span> - 
+                            <span>Producto: {{this.producto.code}}</span> -
+                            <span>Bodega: {{this.producto.title}}</span> - 
                             Cantidad: {{this.quantity}}
                         </li>
                     {{/each}}

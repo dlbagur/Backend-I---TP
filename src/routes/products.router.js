@@ -8,40 +8,6 @@ const router = Router();
 
 const categoriasValidas = ["Tintos", "Blancos", "Rosados", "Espumantes"];    
 
-// router.get("/", async (req, res) => {
-//   let { limit, skip, sort, page } = req.query;
-
-//   // Valores por defecto
-//   page = page ? Number(page) : 1;
-//   limit = limit ? Number(limit) : 10;
-//   skip = skip ? Number(skip) : 0;
-
-//   let sortOptions = {};
-//   if (sort && (sort === 'asc' || sort === 'desc')) {
-//     sortOptions = { price: sort };
-//   }
-
-//   try {
-//     const products = await productsManager.getproductsPaginate(skip, limit, page, sortOptions);
-//       res.render("realTimeProducts", {
-//         products: products.docs,
-//         page: products.page,
-//         totalPages: products.totalPages,
-//         hasNextPage: products.hasNextPage,
-//         hasPrevPage: products.hasPrevPage,
-//         nextPage: products.nextPage,
-//         prevPage: products.prevPage,
-//         limit: limit,
-//         sort: sort
-//       })
-//       } catch (error) {
-//       res.setHeader("Content-Type", "application/json");
-//       return res.status(500).json({
-//       error: `Error inesperado en el servidor. Intente más tarde`,
-//       detalle: `${error.message}`,
-//     });
-//   }
-// });
 router.get("/", async (req, res) => {
   let { limit, skip, sort, page, category, inStock } = req.query;
 

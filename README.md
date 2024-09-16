@@ -12,6 +12,12 @@ Se puede utilizar:
     localhost:8080/api/products?category=Espumantes
     localhost:8080/api/products?category=Tintos&inStock=true
 
+El carrito hardcodeado es el : "66e62eb3a973a75814533678"
+Productos hay:
+"66dfa0edfdcce1b0bb143483"
+"66dfa0edfdcce1b0bb143486"
+"66dfa0edfdcce1b0bb143488"
+
 Para Post pueden utilizar la siguiente info, o usarla de modelo:
 
 {"code":"Alamos Malbec", "category":"Tintos","title":"Catena Zapata", "description":"excelente vino tinto", "price":9000, "stock":10}
