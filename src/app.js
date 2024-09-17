@@ -95,6 +95,12 @@ io.on('connection', (socket) => {
             socket.emit('error', 'Error al agregar Producto al Carrito');
         }
     });
+
+    socket.on('realTimeProductsRequest', async (data) => {
+        const { skip = 0, limit = 10 } = data;
+        const productosPaginados = await productsManager.getproductsPaginate(skip, limit);
+        socket.emit('realTimeProductsResponse', productosPaginados);
+    });
     
 });
 

@@ -3,26 +3,20 @@ import { productosModelo } from "./models/productsModel.js";
 class ProductsManager {
 
     static async getproducts() {
-        return await productosModelo.find().lean()
+          return await productosModelo.find().lean()
     }    
 
     static async getproductsPaginate(skip, limit, page, sortOptions = {}, filters = {}) {
-        const query = {}
-        if (filters.category) {
-            query.category = filters.category
-        }
-        if (filters.inStock) {
-            query.stock = { $gt:0}
-        }
-
         const options = {
-            page: page || 1,
-            limit: limit || 10,
-            sort: sortOptions,
-            lean: true
+          limit: limit || 10,
+          page: page || 1,
+          sort: sortOptions,
+          lean: true,
+          offset: skip
         };
-        return await productosModelo.paginate(query, options);
-    }
+        return await productosModelo.paginate(filters, options);
+      }
+      
 
     static async getProductById(filtro={}){
         return await productosModelo.findById(filtro).lean()
@@ -31,14 +25,9 @@ class ProductsManager {
     static async getProductBy(filtro={}){
         return await productosModelo.findOne(filtro).lean()
     }
+
     static async getProductByCode(nombre={}){
         return await productosModelo.find({code:nombre})
-    }
-
-    static async getProductByQry(skip, limit, order = {}){
-        return await productosModelo.find()
-                .skip(skip)
-                .limit(limit)        
     }
 
     static async createProduct(producto){

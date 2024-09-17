@@ -10,14 +10,17 @@ document.addEventListener('DOMContentLoaded', () => {
     let productoPendiente = null;
     let currentEditId = null;
 
-    // Abre el modal de agregar producto
+    let skip = 0;
+    const limit = 10;
+
+    // Abro el modal de agregar producto
     if (openAddProductModalBtn) {
         openAddProductModalBtn.addEventListener('click', () => {
             addProductModal.style.display = 'block';
         });
     }
 
-    // Cierra los modales
+    // Cierro los modales
     closeAddProductModalBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             addProductModal.style.display = 'none';
@@ -25,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Cierra el modal si se hace clic fuera del modal
+    // Cierro el modal si se hace clic fuera del modal
     window.addEventListener('click', (event) => {
         if (event.target === addProductModal || event.target === editProductModal) {
             addProductModal.style.display = 'none';
@@ -33,7 +36,59 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Validar producto antes de agregarlo
+    socket.emit('realTimeProductsRequest', { skip, limit });
+
+    // Recibo y muestro los productos paginados
+    socket.on('realTimeProductsResponse', (productosPaginados) => {
+        const productList = document.getElementById('product-list');
+        productList.innerHTML = '';
+
+        productosPaginados.docs.forEach(producto => {
+            const productItem = document.createElement('li');
+            productItem.classList.add('card-io');
+            productItem.setAttribute('data-id', producto._id);
+            productItem.innerHTML = `
+                <span class="product-code-io">${producto.code}</span>
+                <br> 
+                <span class="product-category-io">${producto.category}</span> - 
+                <span class="product-title-io">${producto.title}</span>
+                <br>
+                Notas: <span class="product-description-io">${producto.description}</span>
+                <br> 
+                Precio: $<span class="product-price-io">${producto.price}</span> - 
+                Stock: <span class="product-stock-io">${producto.stock}</span>
+                <div class="dropdown">
+                    <button class="dropdown-btn">Opciones</button>
+                    <div class="dropdown-menu">
+                        <a href="#" class="edit-btn" data-id="${producto._id}">Modificar</a>
+                        <a href="#" class="delete-btn" data-id="${producto._id}">Eliminar</a>
+                        <a href="#" class="add-cart-btn" data-id="${producto._id}">Agregar al Carrito</a>
+                    </div>
+                </div>
+            `;
+            productList.appendChild(productItem);
+        });
+
+        // Actualizo la paginación
+        document.getElementById('prevPage').disabled = !productosPaginados.hasPrevPage;
+        document.getElementById('nextPage').disabled = !productosPaginados.hasNextPage;
+    });
+
+    // Botón de página anterior
+    document.getElementById('prevPage').addEventListener('click', () => {
+        if (skip >= limit) {
+            skip -= limit;
+            socket.emit('realTimeProductsRequest', { skip, limit });
+        }
+    });
+
+    // Botón de página siguiente
+    document.getElementById('nextPage').addEventListener('click', () => {
+        skip += limit;
+        socket.emit('realTimeProductsRequest', { skip, limit });
+    });
+
+    // Valido producto antes de agregarlo
     socket.on('productoExiste', (existe) => {
         if (existe) {
             alert('El producto con ese código ya existe.');
@@ -43,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Agrega un nuevo producto
+    // Agrego un nuevo producto
     formAgregarProducto.addEventListener('submit', (e) => {
         e.preventDefault();
         const product = {
@@ -87,13 +142,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Clic en eliminar producto
             if (e.target.classList.contains('delete-btn')) {
-                console.log('Eliminar producto:', idProducto);
                 socket.emit('eliminarProducto', idProducto);
             }
 
             // Clic en editar producto
             if (e.target.classList.contains('edit-btn')) {
-                console.log('Editar producto:', idProducto);
                 currentEditId = idProducto;
                 const card = e.target.closest('.card-io');
                 if (card) {
@@ -109,7 +162,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Clic en agregar al carrito
             if (e.target.classList.contains('add-cart-btn')) {
-                console.log('Agregar al carrito:', idProducto);
                 let cart = "66e62eb3a973a75814533678"; // Debes ajustar cómo obtienes el carrito
                 socket.emit('agregarProductToCart', { cart: cart, idProducto: idProducto });
                 alert(`Producto con ID ${idProducto} agregado al carrito`);

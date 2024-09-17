@@ -12,6 +12,10 @@ Se puede utilizar:
     localhost:8080/api/products?category=Espumantes
     localhost:8080/api/products?category=Tintos&inStock=true
 
+inStock=true, muestra productos con stock>0
+inStock=false, muestra todos
+
+
 El carrito hardcodeado es el : "66e62eb3a973a75814533678"
 Productos hay:
 "66dfa0edfdcce1b0bb143483" --> Sin stock

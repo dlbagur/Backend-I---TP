@@ -10,29 +10,28 @@ const categoriasValidas = ["Tintos", "Blancos", "Rosados", "Espumantes"];
 
 router.get("/", async (req, res) => {
   let { limit, skip, sort, page, category, inStock } = req.query;
-
   page = page ? Number(page) : 1;
   limit = limit ? Number(limit) : 10;
-  skip = skip ? Number(skip) : 0;
+  if (!skip) {
+    skip = (page - 1) * limit;
+  } else {
+    skip = Number(skip);
+  }
 
   let sortOptions = {};
   if (sort && (sort === 'asc' || sort === 'desc')) {
       sortOptions = { price: sort };
   }
-
   const filters = {};
   if (category) {
       filters.category = category;
   }
-
-  if (inStock && inStock === 'true') {
-      filters.inStock = true;
+  if (inStock === 'true') {
+    filters.stock = { $gt: 0 };
   }
-
   try {
-      const products = await productsManager.getproductsPaginate(skip, limit, page, sortOptions, filters);
-
-      res.render("realTimeProducts", {
+    const products = await productsManager.getproductsPaginate(skip, limit, page, sortOptions, filters);
+    res.json({
           products: products.docs,
           page: products.page,
           totalPages: products.totalPages,
@@ -45,13 +44,13 @@ router.get("/", async (req, res) => {
           category: category,
           inStock: inStock
       });
-  } catch (error) {
+    } catch (error) {
       res.setHeader("Content-Type", "application/json");
       return res.status(500).json({
           error: `Error inesperado en el servidor. Intente más tarde`,
           detalle: `${error.message}`,
       });
-  }
+    }
 });
 
 router.get("/:id", async (req, res) => {

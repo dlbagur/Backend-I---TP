@@ -32,15 +32,15 @@
         {{/each}}
     </ul>
 
-   <div class="pagination"></div>
+    <div class="pagination">
         <!-- Botón Anterior -->
         <button id="prevPage" 
             {{#if hasPrevPage}} 
-                onclick="window.location='?page={{prevPage}}&limit={{limit}}&sort={{sort}}'"
+                onclick="window.location='?page={{prevPage}}&limit={{limit}}&sort={{sort}}&category={{category}}&inStock={{inStock}}'"
             {{else}} 
                 disabled
             {{/if}}>
-            Anterior
+                Anterior
         </button>
 
         <!-- Muestra la página actual -->
@@ -49,13 +49,16 @@
         <!-- Botón Siguiente -->
         <button id="nextPage" 
             {{#if hasNextPage}} 
-                onclick="window.location='?page={{nextPage}}&limit={{limit}}&sort={{sort}}'"
+                onclick="window.location='?page={{nextPage}}&limit={{limit}}&sort={{sort}}&category={{category}}&inStock={{inStock}}'"
             {{else}} 
                 disabled
             {{/if}}>
-            Siguiente
+                Siguiente
         </button>
     </div>
+
+    <!-- Botón para agregar producto -->
+    <button id="openAddProductModal" class="add-btn">Agregar Producto</button>
 
     <!-- Modal para modificar un producto -->
     <div id="productModal" class="modal">
@@ -74,9 +77,6 @@
             </form>
         </div>
     </div>
-
-    <!-- Botón para agregar producto -->
-    <button id="openAddProductModal" class="add-btn">Agregar Producto</button>
 
     <!-- Modal para agregar producto -->
     <div id="addProductModal" class="modal">
