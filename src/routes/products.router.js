@@ -31,19 +31,19 @@ router.get("/", async (req, res) => {
   }
   try {
     const products = await productsManager.getproductsPaginate(skip, limit, page, sortOptions, filters);
-    res.json({
-          products: products.docs,
-          page: products.page,
-          totalPages: products.totalPages,
-          hasNextPage: products.hasNextPage,
-          hasPrevPage: products.hasPrevPage,
-          nextPage: products.nextPage,
-          prevPage: products.prevPage,
-          limit: limit,
-          sort: sort,
-          category: category,
-          inStock: inStock
-      });
+    res.render("productsPaginated", {
+      products: products.docs,
+      page: products.page,
+      totalPages: products.totalPages,
+      hasNextPage: products.hasNextPage,
+      hasPrevPage: products.hasPrevPage,
+      nextPage: products.nextPage,
+      prevPage: products.prevPage,
+      limit: limit,
+      sort: sort,
+      category: category,
+      inStock: inStock          
+    });
     } catch (error) {
       res.setHeader("Content-Type", "application/json");
       return res.status(500).json({
