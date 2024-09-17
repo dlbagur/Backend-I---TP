@@ -14,9 +14,19 @@ router.get('/', async (req, res) => {
 });
 
 router.get('/realtimeproducts', async (req, res) => {
-    try {
-        const products = await ProductsManager.getproducts();
+        try {
+        //   const products = await ProductsManager.getproductsPaginateRealTime();
+         const products = await ProductsManager.getproducts();
         res.render('realTimeProducts', { products });
+        // res.render('realTimeProducts', {
+        //     products: products.docs,
+        //     page: products.page,
+        //     totalPages: products.totalPages,
+        //     hasNextPage: products.hasNextPage,
+        //     hasPrevPage: products.hasPrevPage,
+        //     nextPage: products.nextPage,
+        //     prevPage: products.prevPage
+        // });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

@@ -4,7 +4,7 @@ class ProductsManager {
 
     static async getproducts() {
           return await productosModelo.find().lean()
-    }    
+    }
 
     static async getproductsPaginate(skip, limit, page, sortOptions = {}, filters = {}) {
         const options = {
@@ -17,7 +17,10 @@ class ProductsManager {
         return await productosModelo.paginate(filters, options);
       }
       
-
+    static async getproductsPaginateRealTime() {
+        return await productosModelo.paginate;
+    }
+      
     static async getProductById(filtro={}){
         return await productosModelo.findById(filtro).lean()
     }
