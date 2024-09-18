@@ -1,4 +1,4 @@
-Los datos ingresados corresponden a una Vinería, se clasifican por tipo de vino ("tintos", "blancos", "rosados" y "espumantes)
+Los datos ingresados corresponden a una Vinería, se clasifican por tipo de vino ("Tintos", "Blancos", "Rosados" y "Espumantes)
 
 Se puede utilizar:
     localhost:8080/
