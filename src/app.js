@@ -69,7 +69,6 @@ io.on('connection', (socket) => {
 
     socket.on('eliminarProducto', async (idProducto) => {
         try {
-            console.log("Eliminar producto an APP:", idProducto);            
             await productsManager.deleteproduct(idProducto);
             io.emit('eliminarProducto', idProducto);
         } catch (error) {
@@ -102,6 +101,11 @@ io.on('connection', (socket) => {
         socket.emit('realTimeProductsResponse', productosPaginados);
     });
 
+    socket.on('productsPaginatedRequest', async (data) => {
+        const { skip = 0, limit = 10 } = data;
+        const productosPaginados = await productsManager.getproductsPaginate(skip, limit);
+        socket.emit('productsPaginatedResponse', productosPaginados);
+    });
 });
 
 connDB()

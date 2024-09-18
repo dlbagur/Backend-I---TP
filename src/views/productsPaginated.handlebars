@@ -8,19 +8,26 @@
 </head>
 <body>
     <h1>Productos Paginados</h1>
-    
     <ul id="product-list">
         {{#each products}}
-            <li class="product-item">
+            <li class="product-item card-io">
                 <span class="product-code">{{this.code}}</span>
                 <br>
                 <span class="product-category">{{this.category}}</span> - 
                 <span class="product-title">{{this.title}}</span>
                 <br>
-                Notas: <span class="product-description">{{this.description}}</span>
+                <span class="product-description">{{this.description}}</span>
                 <br> 
-                Precio: $<span class="product-price">Precio: ${{this.price}}</span> - 
-                Stock: <span class="product-stock">Stock: {{this.stock}}</span>
+                Precio: $<span class="product-price">{{this.price}}</span> - 
+                Stock: <span class="product-stock">{{this.stock}}</span>
+                <div class="dropdown">
+                    <button class="dropdown-btn">Opciones</button>
+                    <div class="dropdown-menu">
+                        <a href="#" class="edit-btn" data-id="{{this._id}}">Modificar</a>
+                        <a href="#" class="delete-btn" data-id="{{this._id}}">Eliminar</a>
+                        <a href="#" class="add-cart-btn" data-id="{{this._id}}">Agregar al Carrito</a>
+                    </div>
+                </div>
             </li>
         {{/each}}
     </ul>
@@ -50,5 +57,47 @@
         </button>
     </div>
 
+    <!-- Botón para agregar producto -->
+    <div class="container">
+        <button id="openAddProductModal" class="add-btn">Agregar Producto</button>
+    </div>
+
+    <!-- Modal para modificar un producto -->
+    <div id="productModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Modificar Producto</h2>
+            <form id="form-modificar-producto">
+                <input type="text" id="edit-product-code" placeholder="Nombre del vino" required>
+                <input type="text" id="edit-product-category" placeholder="Categoría" required>
+                <input type="text" id="edit-product-title" placeholder="Bodega productora" required>
+                <input type="text" id="edit-product-description" placeholder="Descripción" required>
+                <input type="number" id="edit-product-price" placeholder="Precio" required>
+                <input type="number" id="edit-product-stock" placeholder="Stock" required>
+                <br>
+                <button type="submit">Modificar Producto</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal para agregar producto -->
+    <div id="addProductModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Agregar Nuevo Producto</h2>
+            <form id="form-agrego-producto">
+                <input type="text" id="product-code" placeholder="Nombre del vino" required>
+                <input type="text" id="product-category" placeholder="Categoría" required>
+                <input type="text" id="product-title" placeholder="Bodega productora" required>
+                <input type="text" id="product-description" placeholder="Descripción" required>
+                <input type="number" id="product-price" placeholder="Precio" required>
+                <input type="number" id="product-stock" placeholder="Stock" required>
+                <button type="submit">Agregar Producto</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/scripts/productsPaginated.js"></script>
 </body>
 </html>

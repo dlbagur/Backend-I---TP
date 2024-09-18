@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Recibo y muestro los productos paginados
-    socket.on('realTimeProductsResponse', (productosPaginados) => {
+    socket.on('productsPaginatedResponse', (productosPaginados) => {
         const productList = document.getElementById('product-list');
         productList.innerHTML = '';
 
@@ -76,14 +76,14 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('prevPage').addEventListener('click', () => {
         if (skip >= limit) {
             skip -= limit;
-            socket.emit('realTimeProductsRequest', { skip, limit });
+            socket.emit('productsPaginatedRequest', { skip, limit });
         }
     });
 
     // Botón de página siguiente
     document.getElementById('nextPage').addEventListener('click', () => {
         skip += limit;
-        socket.emit('realTimeProductsRequest', { skip, limit });
+        socket.emit('productsPaginatedRequest', { skip, limit });
     });
 
     // Valido producto antes de agregarlo
