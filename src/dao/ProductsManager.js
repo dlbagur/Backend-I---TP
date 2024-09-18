@@ -16,11 +16,17 @@ class ProductsManager {
         };
         return await productosModelo.paginate(filters, options);
       }
-      
-    static async getproductsPaginateRealTime() {
-        return await productosModelo.paginate;
-    }
-      
+
+      static async getproductsPaginateRealTime(skip, limit, page) {
+        const options = {
+          limit: limit || 10,
+          page: page || 1,
+          lean: true,
+          offset: skip
+        };
+        return await productosModelo.paginate(filters, options);
+      }
+        
     static async getProductById(filtro={}){
         return await productosModelo.findById(filtro).lean()
     }

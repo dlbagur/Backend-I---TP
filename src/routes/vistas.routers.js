@@ -14,19 +14,40 @@ router.get('/', async (req, res) => {
 });
 
 router.get('/realtimeproducts', async (req, res) => {
-        try {
-        //   const products = await ProductsManager.getproductsPaginateRealTime();
-         const products = await ProductsManager.getproducts();
-        res.render('realTimeProducts', { products });
-        // res.render('realTimeProducts', {
-        //     products: products.docs,
-        //     page: products.page,
-        //     totalPages: products.totalPages,
-        //     hasNextPage: products.hasNextPage,
-        //     hasPrevPage: products.hasPrevPage,
-        //     nextPage: products.nextPage,
-        //     prevPage: products.prevPage
-        // });
+    let { limit, skip, sort, page, category, inStock } = req.query;
+    page = page ? Number(page) : 1;
+    limit = limit ? Number(limit) : 10;
+    skip = skip ? Number(skip) : (page - 1) * limit;
+
+    let sortOptions = {};
+    if (sort && (sort === 'asc' || sort === 'desc')) {
+        sortOptions = { price: sort };
+    }
+
+    const filters = {};
+    if (category) {
+        filters.category = category;
+    }
+    if (inStock === 'true') {
+        filters.stock = { $gt: 0 };
+    }
+
+    try {
+        // const products = await ProductsManager.getproductsPaginate(skip, limit, page, sortOptions, filters);
+        const products = await ProductsManager.getproductsPaginate(skip, limit, page);
+        res.render('realTimeProducts', {
+            products: products.docs,
+            page: products.page,
+            totalPages: products.totalPages,
+            hasNextPage: products.hasNextPage,
+            hasPrevPage: products.hasPrevPage,
+            nextPage: products.nextPage,
+            prevPage: products.prevPage,
+            limit: limit,
+            sort: sort || '', 
+            category: category || '',
+            inStock: inStock || ''
+        });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

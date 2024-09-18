@@ -101,7 +101,7 @@ io.on('connection', (socket) => {
         const productosPaginados = await productsManager.getproductsPaginate(skip, limit);
         socket.emit('realTimeProductsResponse', productosPaginados);
     });
-    
+
 });
 
 connDB()

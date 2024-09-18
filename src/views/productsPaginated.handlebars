@@ -29,7 +29,7 @@
         <!-- Botón Anterior -->
         <button id="prevPage" 
             {{#if hasPrevPage}} 
-                onclick="window.location='?page={{prevPage}}&limit={{limit}}&sort={{sort}}'"
+                onclick="window.location='?page={{prevPage}}&limit={{limit}}&sort={{sort}}&category={{category}}&inStock={{inStock}}'"
             {{else}} 
                 disabled
             {{/if}}>
@@ -42,11 +42,11 @@
         <!-- Botón Siguiente -->
         <button id="nextPage" 
             {{#if hasNextPage}} 
-                onclick="window.location='?page={{nextPage}}&limit={{limit}}&sort={{sort}}'"
+                onclick="window.location='?page={{nextPage}}&limit={{limit}}&sort={{sort}}&category={{category}}&inStock={{inStock}}'"
             {{else}} 
                 disabled
             {{/if}}>
-            Siguiente
+                Siguiente
         </button>
     </div>
 
