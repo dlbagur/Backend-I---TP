@@ -5,11 +5,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const idCarrito = e.target.getAttribute('data-id');
 
         if (e.target.classList.contains('delete-btn')) {
-            socket.emit('eliminarCarrito', idCarrito);
+            socket.emit('vaciarCarrito', idCarrito);
         }
     });
 
-    socket.on('eliminarCarrito', (idCarrito) => {
+    socket.on('vaciarCarrito', (idCarrito) => {
         const cartsList = document.getElementById('carts-list');
         const itemToRemove = cartsList.querySelector(`li[data-id="${idCarrito}"]`);
     });

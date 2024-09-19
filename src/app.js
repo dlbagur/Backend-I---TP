@@ -76,16 +76,16 @@ io.on('connection', (socket) => {
         }
     });
 
-    socket.on('eliminarCarrito', async (idCarrito) => {
+    socket.on('vaciarCarrito', async (idCarrito) => {
         try {
             await CartsManager.deleteAllProductsFromCart(idCarrito);
-            io.emit('eliminarCarrito', idCarrito);
+            io.emit('vaciarCarrito', idCarrito);
         } catch (error) {
             socket.emit('error', 'Error al eliminar carrito');
         }
     });
 
-    socket.on('agregarProductToCart', async ({ cart, idProducto }) => {
+    socket.on('agregarProductoAlCart', async ({ cart, idProducto }) => {
         try {
             await CartsManager.addProductToCart(cart, idProducto);
             socket.emit('productoAgregado', { success: true, message: 'Producto agregado al carrito' });
