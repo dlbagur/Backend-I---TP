@@ -157,6 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     editProductModal.style.display = 'block';
                 }
             }
+
             socket.off('productoAgregado');
             socket.on('productoAgregado', (data) => {
                 if (data.success) {

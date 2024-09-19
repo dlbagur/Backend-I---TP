@@ -158,12 +158,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
-            // Clic en agregar al carrito
+            socket.off('productoAgregado');
+            socket.on('productoAgregado', (data) => {
+                if (data.success) {
+                    alert(data.message);
+                } else {
+                    alert(`Error: ${data.message}`);
+                }
+            });
             if (e.target.classList.contains('add-cart-btn')) {
-                let cart = "66e62eb3a973a75814533678"; // Debes ajustar cómo obtienes el carrito
+                let cart = "66e62eb3a973a75814533678";
+                let idProducto = e.target.getAttribute('data-id');
                 socket.emit('agregarProductoAlCart', { cart: cart, idProducto: idProducto });
-                alert(`Producto con ID ${idProducto} agregado al carrito`);
             }
+            
         });
     }
 
