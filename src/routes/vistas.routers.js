@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import ProductsManager from '../dao/ProductsManager.js';
 import CartsManager from '../dao/CartsManager.js';
+import { isValidObjectId } from "mongoose";
 
 const router = Router();
 
@@ -59,6 +60,31 @@ router.get('/realtimecarts', async (req, res) => {
         res.render('realTimeCarts', { carts });
     } catch (error) {
         res.status(500).json({ error: error.message });
+    }
+});
+
+router.get('/realtimecarts/carts', async (req, res) => {
+    try {
+        const carts = await CartsManager.getCarts();
+        res.render('realTimeCarts', { carts });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+router.get('/realtimecarts/carts/:cid', async (req, res) => {
+    let { cid } = req.params;
+    if (!isValidObjectId(cid)) {
+        return res.status(400).json({ error: `ID con formato inválido` });
+    }
+    try {
+        let cart = await CartsManager.getCartById(cid);
+        if (!cart) {
+            return res.status(400).json({ error: `No existe el carrito con ID ${cid}` });
+        } else {
+            res.render('realTimeCarts', {cart} )};
+    } catch (error) {
+        res.status(500).json({ error: `Error inesperado en el servidor: ${error.message}` });
     }
 });
 

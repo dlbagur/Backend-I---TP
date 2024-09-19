@@ -26,8 +26,8 @@ router.get('/:cid', async (req, res) => {
         let cart = await CartsManager.getCartById(cid);
         if (!cart) {
             return res.status(400).json({ error: `No existe el carrito con ID ${cid}` });
-        }
-        res.render('realTimeCarts', { cart });
+        } else {
+            res.render('realTimeCarts', {cart} )};
     } catch (error) {
         res.status(500).json({ error: `Error inesperado en el servidor: ${error.message}` });
     }

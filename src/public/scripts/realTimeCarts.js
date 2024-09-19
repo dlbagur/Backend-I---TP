@@ -12,8 +12,5 @@ document.addEventListener('DOMContentLoaded', () => {
     socket.on('eliminarCarrito', (idCarrito) => {
         const cartsList = document.getElementById('carts-list');
         const itemToRemove = cartsList.querySelector(`li[data-id="${idCarrito}"]`);
-        if (itemToRemove) {
-            cartsList.removeChild(itemToRemove);
-        }
     });
 });

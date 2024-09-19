@@ -160,10 +160,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Clic en agregar al carrito
             if (e.target.classList.contains('add-cart-btn')) {
-                let cart = "66e62eb3a973a75814533678"; // Debes ajustar cómo obtienes el carrito
+                let cart = "66e62eb3a973a75814533678";
                 socket.emit('agregarProductToCart', { cart: cart, idProducto: idProducto });
                 alert(`Producto con ID ${idProducto} agregado al carrito`);
             }
+            socket.on('productoAgregado', (data) => {
+                if (data.success) {
+                    alert(data.message)
+                } else {
+                    alert(`Error: ${data.message}`);
+                }
+            });
         });
     }
 

@@ -78,7 +78,6 @@ io.on('connection', (socket) => {
 
     socket.on('eliminarCarrito', async (idCarrito) => {
         try {
-            // await CartsManager.deleteCart(idCarrito);
             await CartsManager.deleteAllProductsFromCart(idCarrito);
             io.emit('eliminarCarrito', idCarrito);
         } catch (error) {
@@ -86,25 +85,34 @@ io.on('connection', (socket) => {
         }
     });
 
-    socket.on('agregarProductToCart', async ({ cart, idProducto }) => {  // Desestructuramos el objeto
+    socket.on('agregarProductToCart', async ({ cart, idProducto }) => {
         try {
             await CartsManager.addProductToCart(cart, idProducto);
+            socket.emit('productoAgregado', { success: true, message: 'Producto agregado al carrito' });
             io.emit('CarritoActualizado', cart);
         } catch (error) {
-            socket.emit('error', 'Error al agregar Producto al Carrito');
+            socket.emit('productoAgregado', { success: false, message: error.message });
         }
     });
 
     socket.on('realTimeProductsRequest', async (data) => {
-        const { skip = 0, limit = 10 } = data;
-        const productosPaginados = await productsManager.getproductsPaginate(skip, limit);
-        socket.emit('realTimeProductsResponse', productosPaginados);
+        try {
+            const { skip = 0, limit = 10 } = data;
+            const productosPaginados = await productsManager.getproductsPaginate(skip, limit);
+            socket.emit('realTimeProductsResponse', productosPaginados);
+        } catch (error) {
+            socket.emit('error', 'Error al paginar Producto');
+        }
     });
 
     socket.on('productsPaginatedRequest', async (data) => {
-        const { skip = 0, limit = 10 } = data;
-        const productosPaginados = await productsManager.getproductsPaginate(skip, limit);
-        socket.emit('productsPaginatedResponse', productosPaginados);
+        try {
+            const { skip = 0, limit = 10 } = data;
+            const productosPaginados = await productsManager.getproductsPaginate(skip, limit);
+            socket.emit('productsPaginatedResponse', productosPaginados);
+        } catch (error) {
+            socket.emit('error', 'Error al paginar Producto');
+        }
     });
 });
 

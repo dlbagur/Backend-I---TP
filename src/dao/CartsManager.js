@@ -75,19 +75,6 @@ class CartsManager {
         return cart.productos;
     }
 
-    // static async deleteCart(idCarrito) {
-    //     try {
-    //         const cart = await cartsModelo.findById(idCarrito);
-    //         if (!cart) {
-    //             throw new Error(`No existe un carrito con el ID ${idCarrito}`);
-    //         }
-    //         const resultado = await cartsModelo.findByIdAndDelete(idCarrito);
-    //         return resultado;
-    //     } catch (error) {
-    //         throw new Error(`Error eliminando el carrito: ${error.message}`);
-    //     }
-    // }
-
     static async deleteProductFromCart(cartId, productId) {
         let cart = await cartsModelo.findById(cartId);
         if (!cart) {
@@ -113,7 +100,6 @@ class CartsManager {
         await cart.save();
         return cart;
     }
-    
 }
 
 export default CartsManager;
