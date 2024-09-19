@@ -13,6 +13,7 @@
         <ul>
             {{#each cart.productos}}
                 <li>
+                    <span>Id: {{this.producto._id}}</span> -
                     <span>Producto: {{this.producto.code}}</span> -
                     <span>Bodega: {{this.producto.title}}</span> -
                     <span>Cantidad: {{this.quantity}}</span> -
@@ -31,6 +32,7 @@
                     <ul>
                         {{#each this.productos}}
                             <li>
+                                <span>Id: {{this.producto._id}}</span> -
                                 <span>Producto: {{this.producto.code}}</span> -
                                 <span>Bodega: {{this.producto.title}}</span> - 
                                 Cantidad: {{this.quantity}}
