@@ -157,20 +157,20 @@ document.addEventListener('DOMContentLoaded', () => {
                     editProductModal.style.display = 'block';
                 }
             }
-
-            // Clic en agregar al carrito
-            if (e.target.classList.contains('add-cart-btn')) {
-                let cart = "66e62eb3a973a75814533678";
-                socket.emit('agregarProductToCart', { cart: cart, idProducto: idProducto });
-                alert(`Producto con ID ${idProducto} agregado al carrito`);
-            }
+            socket.off('productoAgregado');
             socket.on('productoAgregado', (data) => {
                 if (data.success) {
-                    alert(data.message)
+                    alert(data.message);
                 } else {
                     alert(`Error: ${data.message}`);
                 }
             });
+            
+            if (e.target.classList.contains('add-cart-btn')) {
+                let cart = "66e62eb3a973a75814533678";
+                let idProducto = e.target.getAttribute('data-id');
+                socket.emit('agregarProductToCart', { cart: cart, idProducto: idProducto });
+            }
         });
     }
 
