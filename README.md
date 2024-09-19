@@ -13,7 +13,7 @@ Se puede utilizar:
     localhost:8080/api/products?category=Tintos&inStock=true
 
 inStock=true, muestra productos con stock>0
-inStock=false, muestra todos
+inStock=false o vacío, muestra todos los productos
 
 
 El carrito hardcodeado es el : "66e62eb3a973a75814533678"
