@@ -35,7 +35,6 @@ router.get('/realtimeproducts', async (req, res) => {
 
     try {
         const products = await ProductsManager.getproductsPaginate(skip, limit, page, sortOptions, filters);
-        // const products = await ProductsManager.getproductsPaginate(skip, limit, page);
         res.render('realTimeProducts', {
             products: products.docs,
             page: products.page,

@@ -54,7 +54,7 @@ router.post('/:cid/products/:pid', async (req, res) => {
         const updatedProducts = await CartsManager.addProductToCart(cid, pid);
         res.json(updatedProducts);
     } catch (error) {
-        console.error('Error al agregar producto al carrito:', error); // Log detallado en el servidor
+        console.error('Error al agregar producto al carrito:', error);
         return res.status(500).json({ error: `Error agregando producto al carrito: ${error.message}` });
     }
 });
